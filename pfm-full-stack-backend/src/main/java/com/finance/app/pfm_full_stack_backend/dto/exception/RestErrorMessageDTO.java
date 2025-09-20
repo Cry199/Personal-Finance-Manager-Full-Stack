@@ -1,4 +1,5 @@
 package com.finance.app.pfm_full_stack_backend.dto.exception;
 
-public class RestErrorMessageDTO {
-}
+import org.springframework.http.HttpStatus;
+
+public record RestErrorMessageDTO(HttpStatus status, String message) { }
