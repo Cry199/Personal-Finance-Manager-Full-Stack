@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class CategoryController
     private CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody CreateCategoryDTO data)
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody CreateCategoryDTO data)
     {
         Category newCategory = categoryService.createCategory(data);
 
