@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TransactionService
 {
@@ -30,5 +32,10 @@ public class TransactionService
         return transactionRepository.save(newTransaction);
     }
 
-    // listar, atualizar e deletar
+    public List<Transaction> getTransactionsForUser()
+    {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return transactionRepository.findAllByUserId(user.getId());
+    }
 }
