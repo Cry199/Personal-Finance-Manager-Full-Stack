@@ -42,6 +42,13 @@ public class TransactionController
         return ResponseEntity.ok(transactions);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TransactionResponseDTO> getTransactionById(@PathVariable UUID id)
+    {
+        var transaction = transactionService.getTransactionById(id);
+        return ResponseEntity.ok(transaction);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<TransactionResponseDTO> updateTransaction(@PathVariable UUID id, @RequestBody UpdateTransactionDTO data)
     {
