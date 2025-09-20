@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class TransactionController
     private TransactionService transactionService;
 
     @PostMapping
-    public ResponseEntity<Transaction> createTransaction(@RequestBody CreateTransactionDTO data)
+    public ResponseEntity<Transaction> createTransaction(@Valid @RequestBody CreateTransactionDTO data)
     {
         Transaction newTransaction = transactionService.createTransaction(data);
 
