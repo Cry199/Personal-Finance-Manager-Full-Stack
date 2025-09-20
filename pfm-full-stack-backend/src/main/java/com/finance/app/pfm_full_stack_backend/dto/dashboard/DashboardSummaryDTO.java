@@ -1,4 +1,9 @@
 package com.finance.app.pfm_full_stack_backend.dto.dashboard;
 
-public class DashboardSummaryDTO {
-}
+import java.math.BigDecimal;
+
+public record DashboardSummaryDTO(
+        BigDecimal totalIncome,
+        BigDecimal totalExpense,
+        BigDecimal balance
+) { }
