@@ -1,4 +1,13 @@
 package com.finance.app.pfm_full_stack_backend.dto.transaction;
 
-public record UpdateTransactionDTO() {
-}
+import com.finance.app.pfm_full_stack_backend.entity.Transaction;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+public record UpdateTransactionDTO(
+        String description,
+        BigDecimal amount,
+        LocalDate date,
+        Transaction.TransactionType type
+) { }
