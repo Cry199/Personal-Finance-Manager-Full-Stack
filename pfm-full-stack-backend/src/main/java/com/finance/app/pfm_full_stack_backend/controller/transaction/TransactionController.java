@@ -38,9 +38,18 @@ public class TransactionController
     }
 
     @GetMapping
-    public ResponseEntity<Page<TransactionResponseDTO>> getAllTransactions(Pageable pageable)
+    public ResponseEntity<Page<TransactionResponseDTO>> getAllTransactions(
+            Pageable pageable,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Transaction.TransactionType type,
+            @RequestParam(required = false) UUID categoryId
+    )
     {
-        Page<TransactionResponseDTO> transactions = transactionService.getTransactionsForUser(pageable);
+        Page<TransactionResponseDTO> transactions = transactionService.getTransactionsForUser(
+                pageable, month, year, type, categoryId
+        );
+
         return ResponseEntity.ok(transactions);
     }
 
