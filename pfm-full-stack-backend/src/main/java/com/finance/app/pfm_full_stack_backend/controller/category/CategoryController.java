@@ -1,6 +1,7 @@
 package com.finance.app.pfm_full_stack_backend.controller.category;
 
 
+import com.finance.app.pfm_full_stack_backend.dto.category.CategoryResponseDTO;
 import com.finance.app.pfm_full_stack_backend.dto.category.CreateCategoryDTO;
 import com.finance.app.pfm_full_stack_backend.entity.Category;
 import com.finance.app.pfm_full_stack_backend.service.category.CategoryService;
@@ -21,20 +22,21 @@ public class CategoryController
     private CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@Valid @RequestBody CreateCategoryDTO data)
+    public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CreateCategoryDTO data)
     {
         Category newCategory = categoryService.createCategory(data);
+        CategoryResponseDTO responseDTO = new CategoryResponseDTO(newCategory);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(newCategory.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(newCategory);
+        return ResponseEntity.created(uri).body(responseDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories()
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories()
     {
-        List<Category> categories = categoryService.getCategoriesForUser();
+        List<CategoryResponseDTO> categories = categoryService.getCategoriesForUser();
         return ResponseEntity.ok(categories);
     }
 }
