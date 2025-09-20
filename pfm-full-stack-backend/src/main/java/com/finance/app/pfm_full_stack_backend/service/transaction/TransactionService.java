@@ -1,6 +1,7 @@
 package com.finance.app.pfm_full_stack_backend.service.transaction;
 
 import com.finance.app.pfm_full_stack_backend.dto.transaction.CreateTransactionDTO;
+import com.finance.app.pfm_full_stack_backend.dto.transaction.TransactionResponseDTO;
 import com.finance.app.pfm_full_stack_backend.dto.transaction.UpdateTransactionDTO;
 import com.finance.app.pfm_full_stack_backend.entity.Transaction;
 import com.finance.app.pfm_full_stack_backend.entity.User;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService
@@ -34,11 +36,14 @@ public class TransactionService
         return transactionRepository.save(newTransaction);
     }
 
-    public List<Transaction> getTransactionsForUser()
+    public List<TransactionResponseDTO> getTransactionsForUser()
     {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return transactionRepository.findAllByUserId(user.getId());
+        return transactionRepository.findAllByUserId(user.getId())
+                .stream() // Converte a lista para um stream
+                .map(TransactionResponseDTO::new) // Para cada Transaction, cria um TransactionResponseDTO
+                .collect(Collectors.toList()); // Coleta os resultados em uma nova lista
     }
 
     public Transaction updateTransaction(UUID id, UpdateTransactionDTO data)
@@ -71,5 +76,20 @@ public class TransactionService
         }
 
         return transactionRepository.save(transaction);
+    }
+
+    public void deleteTransaction(UUID id)
+    {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        var transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transação não encontrada"));
+
+        if (!transaction.getUser().getId().equals(user.getId()))
+        {
+            throw new SecurityException("Acesso negado: você não pode deletar uma transação que não é sua.");
+        }
+
+        transactionRepository.delete(transaction);
     }
 }
