@@ -1,5 +1,6 @@
 package com.finance.app.pfm_full_stack_backend.service.category;
 
+import com.finance.app.pfm_full_stack_backend.dto.category.CategoryResponseDTO;
 import com.finance.app.pfm_full_stack_backend.dto.category.CreateCategoryDTO;
 import com.finance.app.pfm_full_stack_backend.entity.Category;
 import com.finance.app.pfm_full_stack_backend.entity.User;
@@ -9,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService
@@ -25,10 +27,13 @@ public class CategoryService
         return categoryRepository.save(newCategory);
     }
 
-    public List<Category> getCategoriesForUser()
+    public List<CategoryResponseDTO> getCategoriesForUser()
     {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return categoryRepository.findAllByUserId(user.getId());
+        return categoryRepository.findAllByUserId(user.getId())
+                .stream()
+                .map(CategoryResponseDTO::new)
+                .collect(Collectors.toList());
     }
 }
