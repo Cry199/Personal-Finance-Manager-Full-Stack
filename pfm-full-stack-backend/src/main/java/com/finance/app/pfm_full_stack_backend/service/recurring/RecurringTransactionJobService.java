@@ -1,4 +1,4 @@
-package com.finance.app.pfm_full_stack_backend.service.log;
+package com.finance.app.pfm_full_stack_backend.service.recurring;
 
 import com.finance.app.pfm_full_stack_backend.entity.JobExecutionLog;
 import com.finance.app.pfm_full_stack_backend.entity.RecurringTransaction;
