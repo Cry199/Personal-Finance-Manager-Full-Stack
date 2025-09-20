@@ -1,6 +1,5 @@
-package com.finance.app.pfm_full_stack_backend.controller.test;
+package com.finance.app.pfm_full_stack_backend.entity;
 
-import com.finance.app.pfm_full_stack_backend.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
