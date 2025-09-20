@@ -53,6 +53,21 @@ public class TransactionService
         return transactionRepository.save(newTransaction);
     }
 
+    public TransactionResponseDTO getTransactionById(UUID id)
+    {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        var transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transação não encontrada"));
+
+        if (!transaction.getUser().getId().equals(user.getId()))
+        {
+            throw new SecurityException("Transação não encontrada");
+        }
+
+        return new TransactionResponseDTO(transaction);
+    }
+
     public List<TransactionResponseDTO> getTransactionsForUser()
     {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -104,7 +119,7 @@ public class TransactionService
 
         if (!transaction.getUser().getId().equals(user.getId()))
         {
-            throw new SecurityException("Acesso negado: você não pode deletar uma transação que não é sua.");
+            throw new SecurityException("Transação não encontrada");
         }
 
         transactionRepository.delete(transaction);
