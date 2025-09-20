@@ -3,8 +3,10 @@ package com.finance.app.pfm_full_stack_backend.service.transaction;
 import com.finance.app.pfm_full_stack_backend.dto.transaction.CreateTransactionDTO;
 import com.finance.app.pfm_full_stack_backend.dto.transaction.TransactionResponseDTO;
 import com.finance.app.pfm_full_stack_backend.dto.transaction.UpdateTransactionDTO;
+import com.finance.app.pfm_full_stack_backend.entity.Category;
 import com.finance.app.pfm_full_stack_backend.entity.Transaction;
 import com.finance.app.pfm_full_stack_backend.entity.User;
+import com.finance.app.pfm_full_stack_backend.repository.CategoryRepository;
 import com.finance.app.pfm_full_stack_backend.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,9 +22,23 @@ public class TransactionService
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public Transaction createTransaction(CreateTransactionDTO data)
     {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Category category = null;
+        if (data.categoryId() != null)
+        {
+            category = categoryRepository.findById(data.categoryId())
+                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+
+            if (!category.getUser().getId().equals(user.getId())) {
+                throw new SecurityException("Acesso negado: a categoria não pertence a você.");
+            }
+        }
 
         Transaction newTransaction = new Transaction(
                 null,
@@ -30,7 +46,8 @@ public class TransactionService
                 data.amount(),
                 data.date(),
                 data.type(),
-                user
+                user,
+                category
         );
 
         return transactionRepository.save(newTransaction);
