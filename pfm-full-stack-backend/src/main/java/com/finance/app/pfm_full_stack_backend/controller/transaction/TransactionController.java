@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/transactions")
@@ -29,5 +31,13 @@ public class TransactionController
                 .buildAndExpand(newTransaction.getId()).toUri();
 
         return ResponseEntity.created(uri).body(newTransaction);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Transaction>> getAllTransactions()
+    {
+        var transactions = transactionService.getTransactionsForUser();
+
+        return ResponseEntity.ok(transactions);
     }
 }
