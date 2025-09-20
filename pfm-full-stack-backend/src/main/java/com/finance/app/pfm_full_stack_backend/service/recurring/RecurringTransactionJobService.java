@@ -78,6 +78,7 @@ public class RecurringTransactionJobService
 
     private void createMissingTransactionsForRule(RecurringTransaction rule, LocalDate lastRunDate, LocalDate today)
     {
+        LocalDate latestExecutionDate = rule.getLastExecutionDate();
         LocalDate nextDueDate = rule.getLastExecutionDate() != null ? rule.getLastExecutionDate() : rule.getStartDate();
 
         while (!nextDueDate.isAfter(today))
@@ -95,9 +96,18 @@ public class RecurringTransactionJobService
                 );
                 transactionRepository.save(newTransaction);
                 log.info("Transação recorrente criada: '{}' na data {}", newTransaction.getDescription(), nextDueDate);
+
+                latestExecutionDate = nextDueDate;
             }
 
             nextDueDate = calculateNextDueDate(nextDueDate, rule.getPeriod());
+        }
+
+        if (latestExecutionDate != null && !latestExecutionDate.equals(rule.getLastExecutionDate()))
+        {
+            rule.setLastExecutionDate(latestExecutionDate);
+            recurringTransactionRepository.save(rule); // Salva a regra atualizada
+            log.info("Regra recorrente '{}' atualizada com a data de execução {}", rule.getDescription(), latestExecutionDate);
         }
     }
 
