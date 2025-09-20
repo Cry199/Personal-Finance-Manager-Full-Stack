@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -36,9 +38,9 @@ public class TransactionController
     }
 
     @GetMapping
-    public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions()
+    public ResponseEntity<Page<TransactionResponseDTO>> getAllTransactions(Pageable pageable)
     {
-        var transactions = transactionService.getTransactionsForUser();
+        Page<TransactionResponseDTO> transactions = transactionService.getTransactionsForUser(pageable);
         return ResponseEntity.ok(transactions);
     }
 
