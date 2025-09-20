@@ -24,14 +24,15 @@ public class TransactionController
     private TransactionService transactionService;
 
     @PostMapping
-    public ResponseEntity<Transaction> createTransaction(@Valid @RequestBody CreateTransactionDTO data)
+    public ResponseEntity<TransactionResponseDTO> createTransaction(@Valid @RequestBody CreateTransactionDTO data)
     {
         Transaction newTransaction = transactionService.createTransaction(data);
+        TransactionResponseDTO responseDTO = new TransactionResponseDTO(newTransaction);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(newTransaction.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(newTransaction);
+        return ResponseEntity.created(uri).body(responseDTO);
     }
 
     @GetMapping
@@ -42,10 +43,12 @@ public class TransactionController
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Transaction> updateTransaction(@PathVariable UUID id, @RequestBody UpdateTransactionDTO data)
+    public ResponseEntity<TransactionResponseDTO> updateTransaction(@PathVariable UUID id, @RequestBody UpdateTransactionDTO data)
     {
         Transaction updatedTransaction = transactionService.updateTransaction(id, data);
-        return ResponseEntity.ok(updatedTransaction);
+
+        TransactionResponseDTO responseDTO = new TransactionResponseDTO(updatedTransaction);
+        return ResponseEntity.ok(responseDTO);
     }
 
     @DeleteMapping("/{id}")
