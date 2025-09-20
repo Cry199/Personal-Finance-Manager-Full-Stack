@@ -1,10 +1,12 @@
 package com.finance.app.pfm_full_stack_backend.controller.transaction;
 
 import com.finance.app.pfm_full_stack_backend.dto.transaction.CreateTransactionDTO;
+import com.finance.app.pfm_full_stack_backend.dto.transaction.TransactionResponseDTO;
 import com.finance.app.pfm_full_stack_backend.dto.transaction.UpdateTransactionDTO;
 import com.finance.app.pfm_full_stack_backend.entity.Transaction;
 import com.finance.app.pfm_full_stack_backend.service.transaction.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -32,10 +34,9 @@ public class TransactionController
     }
 
     @GetMapping
-    public ResponseEntity<List<Transaction>> getAllTransactions()
+    public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions()
     {
         var transactions = transactionService.getTransactionsForUser();
-
         return ResponseEntity.ok(transactions);
     }
 
@@ -44,5 +45,12 @@ public class TransactionController
     {
         Transaction updatedTransaction = transactionService.updateTransaction(id, data);
         return ResponseEntity.ok(updatedTransaction);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTransaction(@PathVariable UUID id)
+    {
+        transactionService.deleteTransaction(id);
     }
 }
