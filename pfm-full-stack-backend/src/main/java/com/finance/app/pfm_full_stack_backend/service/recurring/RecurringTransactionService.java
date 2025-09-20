@@ -84,6 +84,43 @@ public class RecurringTransactionService
             throw new SecurityException("Acesso negado: esta regra não lhe pertence.");
         }
 
+        if (data.description() != null)
+        {
+            recurring.setDescription(data.description());
+        }
+        if (data.amount() != null)
+        {
+            recurring.setAmount(data.amount());
+        }
+        if (data.type() != null)
+        {
+            recurring.setType(data.type());
+        }
+        if (data.startDate() != null)
+        {
+            recurring.setStartDate(data.startDate());
+        }
+        if (data.period() != null)
+        {
+            recurring.setPeriod(data.period());
+        }
+        if (data.categoryId() != null)
+        {
+            Category category = categoryRepository.findById(data.categoryId())
+                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+
+            if (!category.getUser().getId().equals(user.getId()))
+            {
+                throw new SecurityException("Acesso negado: a categoria não pertence a si.");
+            }
+
+            recurring.setCategory(category);
+        }
+
+        if (data.endDate() != null) {
+            recurring.setEndDate(data.endDate());
+        }
+
         return recurringTransactionRepository.save(recurring);
     }
 
