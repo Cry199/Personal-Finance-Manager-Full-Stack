@@ -8,7 +8,9 @@ import com.finance.app.pfm_full_stack_backend.entity.Transaction;
 import com.finance.app.pfm_full_stack_backend.entity.User;
 import com.finance.app.pfm_full_stack_backend.repository.CategoryRepository;
 import com.finance.app.pfm_full_stack_backend.repository.TransactionRepository;
+import com.finance.app.pfm_full_stack_backend.specification.transaction.TransactionSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
@@ -70,11 +72,21 @@ public class TransactionService
         return new TransactionResponseDTO(transaction);
     }
 
-    public Page<TransactionResponseDTO> getTransactionsForUser(Pageable pageable)
+    public Page<TransactionResponseDTO> getTransactionsForUser(
+            Pageable pageable,
+            Integer month,
+            Integer year,
+            Transaction.TransactionType type,
+            UUID categoryId
+    )
     {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Page<Transaction> transactionsPage = transactionRepository.findAllByUserId(user.getId(), pageable);
+        Specification<Transaction> spec = TransactionSpecification.getTransactionsByCriteria(
+                user, month, year, type, categoryId
+        );
+
+        Page<Transaction> transactionsPage = transactionRepository.findAll(spec, pageable);
 
         return transactionsPage.map(TransactionResponseDTO::new);
     }
