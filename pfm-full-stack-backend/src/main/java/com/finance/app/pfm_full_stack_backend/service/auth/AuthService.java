@@ -1,4 +1,4 @@
-package com.finance.app.pfm_full_stack_backend.service;
+package com.finance.app.pfm_full_stack_backend.service.auth;
 
 import com.finance.app.pfm_full_stack_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
