@@ -11,6 +11,8 @@ import com.finance.app.pfm_full_stack_backend.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -68,14 +70,13 @@ public class TransactionService
         return new TransactionResponseDTO(transaction);
     }
 
-    public List<TransactionResponseDTO> getTransactionsForUser()
+    public Page<TransactionResponseDTO> getTransactionsForUser(Pageable pageable)
     {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return transactionRepository.findAllByUserId(user.getId())
-                .stream() // Converte a lista para um stream
-                .map(TransactionResponseDTO::new) // Para cada Transaction, cria um TransactionResponseDTO
-                .collect(Collectors.toList()); // Coleta os resultados em uma nova lista
+        Page<Transaction> transactionsPage = transactionRepository.findAllByUserId(user.getId(), pageable);
+
+        return transactionsPage.map(TransactionResponseDTO::new);
     }
 
     public Transaction updateTransaction(UUID id, UpdateTransactionDTO data)
