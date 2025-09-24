@@ -6,6 +6,7 @@ import RegisterPage from './features/auth/pages/RegisterPage';
 import DashboardPage from './features/dashboard/pages/DashboardPage';
 import TransactionsPage from './features/transactions/pages/TransactionsPage';
 import MainLayout from './components/layout/MainLayout';
+import CategoriesPage from './features/categories/pages/CategoriesPage';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -23,6 +24,7 @@ const AppContent = () => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        
 
         {/* Rotas Protegidas com Layout */}
         <Route
@@ -35,6 +37,7 @@ const AppContent = () => {
         >
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="transactions" element={<TransactionsPage />} />
+          <Route path="categories" element={<CategoriesPage />} />
           {/* Redirecionar a rota raiz para o dashboard */}
           <Route index element={<Navigate to="/dashboard" />} />
         </Route>
