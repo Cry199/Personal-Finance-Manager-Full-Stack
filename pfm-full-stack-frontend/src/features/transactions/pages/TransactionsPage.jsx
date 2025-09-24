@@ -8,6 +8,7 @@ const TransactionsPage = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingTransaction, setEditingTransaction] = useState(null);
     const { user } = useAuth();
 
     const fetchTransactions = async () => {
@@ -28,6 +29,8 @@ const TransactionsPage = () => {
         }
     }, [user]);
 
+
+    // Função para apagar uma transação
     const handleDelete = async (id) => {
         if (window.confirm('Tem a certeza que quer apagar esta transação?')) {
             try {
@@ -40,10 +43,29 @@ const TransactionsPage = () => {
         }
     };
 
+    // Função para salvar uma transação
     const handleSave = () => {
-        setIsModalOpen(false); // Fechar o modal
-        fetchTransactions(); // Atualizar a lista
+        setIsModalOpen(false);
+        setEditingTransaction(null);
+        fetchTransactions();
     };
+
+    // Função para editar uma transação
+    const handleEdit = (transaction) => {
+        setEditingTransaction(transaction);
+        setIsModalOpen(true);
+    };
+
+    // Função para adicionar uma nova transação
+    const handleAddNew = () => {
+        setEditingTransaction(null);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingTransaction(null);
+    }
 
     if (loading) {
         return <div>A carregar transações...</div>;
@@ -56,8 +78,12 @@ const TransactionsPage = () => {
                 <button onClick={() => setIsModalOpen(true)}>Adicionar Nova Transação</button>
             </div>
 
-            <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                <TransactionForm onSave={handleSave} onClose={() => setIsModalOpen(false)} />
+            <Modal open={isModalOpen} onClose={closeModal}>
+                <TransactionForm
+                    onSave={handleSave}
+                    onClose={closeModal}
+                    transactionToEdit={editingTransaction}
+                />
             </Modal>
 
             <table>
@@ -80,7 +106,7 @@ const TransactionsPage = () => {
                             <td>{new Date(t.date).toLocaleDateString('pt-PT')}</td>
                             <td>{t.type === 'EXPENSE' ? 'Despesa' : 'Receita'}</td>
                             <td>
-                                <button onClick={() => alert('Editar ' + t.id)}>Editar</button>
+                                <button onClick={() => handleEdit(t)}>Editar</button>
                                 <button onClick={() => handleDelete(t.id)}>Apagar</button>
                             </td>
                         </tr>
