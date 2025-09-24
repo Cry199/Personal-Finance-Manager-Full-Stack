@@ -7,6 +7,7 @@ import TransactionForm from '../components/TransactionForm';
 const TransactionsPage = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const { user } = useAuth();
 
     const fetchTransactions = async () => {
