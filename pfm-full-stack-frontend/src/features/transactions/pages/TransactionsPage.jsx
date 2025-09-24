@@ -75,7 +75,7 @@ const TransactionsPage = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2>Minhas Transações</h2>
-                <button onClick={() => setIsModalOpen(true)}>Adicionar Nova Transação</button>
+                <button onClick={handleAddNew}>Adicionar Nova Transação</button>
             </div>
 
             <Modal open={isModalOpen} onClose={closeModal}>
