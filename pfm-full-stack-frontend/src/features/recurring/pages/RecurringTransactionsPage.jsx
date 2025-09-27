@@ -83,55 +83,54 @@ const RecurringTransactionsPage = () => {
         return <div>A carregar...</div>;
     }
 
-    return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2>Transações Recorrentes</h2>
-                <button onClick={handleAddNew}>Adicionar Nova</button>
-            </div>
+return (
+    <div className="content-card">
+      <div className="page-header">
+        <h2>Transações Recorrentes</h2>
+        <button onClick={handleAddNew} className="primary-button">
+          Adicionar Nova
+        </button>
+      </div>
 
-            <Modal open={isModalOpen} onClose={closeModal}>
-                <RecurringTransactionForm
-                    onSave={handleSave}
-                    onClose={closeModal}
-                    recurringToEdit={editingRecurring}
-                />
-            </Modal>
+      <Modal open={isModalOpen} onClose={closeModal}>
+        <RecurringTransactionForm 
+            onSave={handleSave}
+            onClose={closeModal}
+            recurringToEdit={editingRecurring}
+        />
+      </Modal>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Descrição</th>
-                        <th>Valor</th>
-                        <th>Tipo</th>
-                        <th>Período</th>
-                        <th>Próxima Ocorrência</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {recurring.map((r) => (
-                        <tr key={r.id}>
-                            <td>{r.description}</td>
-                            <td style={{ color: r.type === 'EXPENSE' ? 'red' : 'green' }}>
-                                {new Intl.NumberFormat('pt-PT', {
-                                    style: 'currency',
-                                    currency: 'EUR',
-                                }).format(r.amount)}
-                            </td>
-                            <td>{r.type === 'EXPENSE' ? 'Despesa' : 'Receita'}</td>
-                            <td>{periodMapping[r.period]}</td>
-                            <td>{new Date(r.startDate).toLocaleDateString('pt-PT')}</td> {/* CORRIGIDO AQUI */}
-                            <td>
-                                <button onClick={() => handleEdit(r)}>Editar</button>
-                                <button onClick={() => handleDelete(r.id)}>Apagar</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+      <table className="custom-table">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Tipo</th>
+            <th>Período</th>
+            <th>Data de Início</th>
+            <th style={{ textAlign: 'right' }}>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recurring.map((r) => (
+            <tr key={r.id}>
+              <td>{r.description}</td>
+              <td style={{ color: r.type === 'EXPENSE' ? 'var(--error-color)' : 'var(--success-color)' }}>
+                {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(r.amount)}
+              </td>
+              <td>{r.type === 'EXPENSE' ? 'Despesa' : 'Receita'}</td>
+              <td>{periodMapping[r.period]}</td>
+              <td>{new Date(r.startDate).toLocaleDateString('pt-PT')}</td>
+              <td className="actions-cell">
+                <button onClick={() => handleEdit(r)} className="edit-button">Editar</button>
+                <button onClick={() => handleDelete(r.id)} className="delete-button">Apagar</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default RecurringTransactionsPage;
