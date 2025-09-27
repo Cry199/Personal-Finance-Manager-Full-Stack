@@ -4,6 +4,15 @@ import { useAuth } from '../../../hooks/useAuth';
 import Modal from '../../../components/common/Modal';
 import TransactionForm from '../components/TransactionForm';
 
+const generateYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let i = currentYear + 1; i >= currentYear - 5; i--) {
+        years.push(i);
+    }
+    return years;
+};
+
 const TransactionsPage = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -11,11 +20,20 @@ const TransactionsPage = () => {
     const [editingTransaction, setEditingTransaction] = useState(null);
     const { user } = useAuth();
 
+    const [filters, setFilters] = useState({
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1, // Mês em JS é 0-11, na API é 1-12
+    });
+
+    const [page, setPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+
     const fetchTransactions = async () => {
         try {
             setLoading(true);
-            const response = await getTransactions();
-            setTransactions(response.data.content); // A API paginada retorna os dados em 'content'
+            const response = await getTransactions(page, 10, filters);
+            setTransactions(response.data.content);
+            setTotalPages(response.data.totalPages);
         } catch (error) {
             console.error('Erro ao buscar transações:', error);
         } finally {
@@ -27,7 +45,17 @@ const TransactionsPage = () => {
         if (user) {
             fetchTransactions();
         }
-    }, [user]);
+    }, [user, filters, page]);
+
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            [name]: value ? parseInt(value) : null
+        }));
+        setPage(0);
+    };
 
 
     // Função para apagar uma transação
@@ -113,6 +141,16 @@ const TransactionsPage = () => {
                     ))}
                 </tbody>
             </table>
+
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}>
+                    Anterior
+                </button>
+                <span>Página {page + 1} de {totalPages}</span>
+                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}>
+                    Próxima
+                </button>
+            </div>
         </div>
     );
 };
