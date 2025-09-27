@@ -11,6 +11,16 @@ import Modal from '../../../components/common/Modal';
 import TransactionForm from '../components/TransactionForm';
 import Spinner from '../../../components/common/Spinner';
 
+// Função para gerar as opções do ano
+const generateYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let i = currentYear + 1; i >= currentYear - 5; i--) {
+        years.push(i);
+    }
+    return years;
+};
+
 const TransactionsPage = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -23,6 +33,8 @@ const TransactionsPage = () => {
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1,
     });
+
+    const yearOptions = generateYearOptions();
 
     const fetchTransactions = useCallback(async () => {
         setLoading(true);
@@ -73,6 +85,15 @@ const TransactionsPage = () => {
             });
         }
     };
+    
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            [name]: value ? parseInt(value) : null
+        }));
+        setPage(0); // Volta para a primeira página ao mudar o filtro
+    };
 
     const handleEdit = (transaction) => {
         setEditingTransaction(transaction);
@@ -96,6 +117,24 @@ const TransactionsPage = () => {
                 <button onClick={handleAddNew} className="primary-button">
                     Adicionar Nova
                 </button>
+            </div>
+
+             <div className="filters-container">
+                <div className="form-field">
+                    <label>Ano</label>
+                    <select name="year" value={filters.year || ''} onChange={handleFilterChange} className="input-field">
+                        {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+                    </select>
+                </div>
+                <div className="form-field">
+                    <label>Mês</label>
+                    <select name="month" value={filters.month || ''} onChange={handleFilterChange} className="input-field">
+                        <option value="">Todos</option>
+                        {Array.from({ length: 12 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>{new Date(0, i).toLocaleString('pt-PT', { month: 'long' })}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             <Modal open={isModalOpen} onClose={closeModal}>
@@ -139,8 +178,9 @@ const TransactionsPage = () => {
                             ))}
                         </tbody>
                     </table>
+                    
                     {totalPages > 1 && (
-                         <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+                         <div className="pagination-container">
                             <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}>
                                 Anterior
                             </button>
@@ -153,9 +193,9 @@ const TransactionsPage = () => {
                 </>
             ) : (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
-                    <p>Nenhuma transação encontrada.</p>
+                    <p>Nenhuma transação encontrada para os filtros selecionados.</p>
                     <button onClick={handleAddNew} className="primary-button" style={{ marginTop: '1rem' }}>
-                        Adicionar a sua primeira transação
+                        Adicionar uma transação
                     </button>
                 </div>
             )}
