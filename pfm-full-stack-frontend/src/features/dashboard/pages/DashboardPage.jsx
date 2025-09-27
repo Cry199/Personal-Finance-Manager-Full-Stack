@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { getDashboardSummary, getExpensesByCategory }  from '../api/dashboardApi';
+import { getDashboardSummary, getExpensesByCategory } from '../api/dashboardApi';
 import { useAuth } from '../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import styles from './DashboardPage.module.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -61,17 +62,24 @@ const DashboardPage = () => {
 
   return (
     <div>
-      <h2>Dashboard</h2>
-      <div style={{ display: 'flex', gap: '20px' }}>
-        <div>
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div className={styles.summaryCard}>
           <h3>Resumo do Mês</h3>
-          <p>Receita Total: {summary.totalIncome}</p>
-          <p>Despesa Total: {summary.totalExpense}</p>
-          <p>Saldo: {summary.balance}</p>
+            <p>Receita Total: {summary.totalIncome}</p>
+            <p>Despesa Total: {summary.totalExpense}</p>
+            <p>Saldo: {summary.balance}</p>
         </div>
-        <div style={{ width: '400px', height: '400px' }}>
-          <h3>Despesas por Categoria</h3>
-          <Pie data={expenseData} />
+        <div className="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Despesas por Categoria</h3>
+          <div className="max-w-md mx-auto">
+            {expenseData.labels.length > 0 ? (
+              <Pie data={expenseData} />
+            ) : (
+              <p>Não há despesas com categoria para mostrar.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
