@@ -375,3 +375,38 @@ body.dark-mode .theme-toggle-button:hover {
   border: 1px solid var(--border-color);
   color: var(--primary-text-color);
 }
+
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border-radius: 6px;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.pagination-container button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  cursor: pointer;
+}
+
+.pagination-container button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination-container span {
+  font-size: 0.9rem;
+  color: var(--secondary-text-color);
+}
