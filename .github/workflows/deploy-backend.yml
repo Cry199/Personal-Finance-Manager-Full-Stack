@@ -39,7 +39,6 @@ jobs:
             --platform managed \
             --region southamerica-east1 \
             --allow-unauthenticated \
-            --add-cloudsql-instances="gen-lang-client-0887157069:southamerica-east1:multi-project-dev-db" \
             --set-env-vars="SPRING_DATASOURCE_URL=jdbc:postgresql://${{ secrets.IP_POSTGRES }}:5432/personal_finances_db?sslmode=require" \
             --set-env-vars="SPRING_DATASOURCE_USERNAME=postgres" \
             --update-secrets="SPRING_DATASOURCE_PASSWORD=linktree-db-password:latest,API_SECURITY_TOKEN_SECRET=jwt-secret:latest" \
