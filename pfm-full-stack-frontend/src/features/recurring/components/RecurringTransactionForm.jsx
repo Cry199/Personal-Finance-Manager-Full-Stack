@@ -9,7 +9,7 @@ const RecurringTransactionForm = ({ onSave, onClose, recurringToEdit }) => {
     const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
     const [categoryId, setCategoryId] = useState('');
     const [categories, setCategories] = useState([]);
-    
+
     // Preencher o formulário se estivermos a editar
     useEffect(() => {
         if (recurringToEdit) {
@@ -46,47 +46,62 @@ const RecurringTransactionForm = ({ onSave, onClose, recurringToEdit }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="modal-form">
             <h3>{recurringToEdit ? 'Editar Regra Recorrente' : 'Nova Regra Recorrente'}</h3>
-            <div>
-                <label>Descrição</label>
-                <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} required />
+
+            <div className="form-field">
+                <label htmlFor="rec-description">Descrição</label>
+                <input id="rec-description" type="text" value={description} onChange={(e) => setDescription(e.target.value)} className="input-field" required />
             </div>
-            <div>
-                <label>Valor</label>
-                <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+
+            <div className="form-grid">
+                <div className="form-field">
+                    <label htmlFor="rec-amount">Valor</label>
+                    <input id="rec-amount" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="input-field" required />
+                </div>
+                <div className="form-field">
+                    <label htmlFor="rec-start-date">Data de Início</label>
+                    <input id="rec-start-date" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="input-field" required />
+                </div>
             </div>
-            <div>
-                <label>Tipo</label>
-                <select value={type} onChange={(e) => setType(e.target.value)}>
-                    <option value="EXPENSE">Despesa</option>
-                    <option value="INCOME">Receita</option>
-                </select>
+
+            <div className="form-grid">
+                <div className="form-field">
+                    <label htmlFor="rec-type">Tipo</label>
+                    <select id="rec-type" value={type} onChange={(e) => setType(e.target.value)} className="input-field">
+                        <option value="EXPENSE">Despesa</option>
+                        <option value="INCOME">Receita</option>
+                    </select>
+                </div>
+                <div className="form-field">
+                    <label htmlFor="rec-period">Repetir a cada</label>
+                    <select id="rec-period" value={period} onChange={(e) => setPeriod(e.target.value)} className="input-field">
+                        <option value="DAILY">Dia</option>
+                        <option value="WEEKLY">Semana</option>
+                        <option value="MONTHLY">Mês</option>
+                        <option value="YEARLY">Ano</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <label>Repetir a cada</label>
-                <select value={period} onChange={(e) => setPeriod(e.target.value)}>
-                    <option value="DAILY">Dia</option>
-                    <option value="WEEKLY">Semana</option>
-                    <option value="MONTHLY">Mês</option>
-                    <option value="YEARLY">Ano</option>
-                </select>
-            </div>
-            <div>
-                <label>Data de Início</label>
-                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
-            </div>
-            <div>
-                <label>Categoria</label>
-                <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+
+            <div className="form-field">
+                <label htmlFor="rec-category">Categoria</label>
+                <select id="rec-category" value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="input-field">
                     <option value="">Nenhuma</option>
                     {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
                 </select>
             </div>
-            <button type="submit">Salvar</button>
-            <button type="button" onClick={onClose}>Cancelar</button>
+
+            <div className="form-actions">
+                <button type="button" onClick={onClose} className="secondary-button">
+                    Cancelar
+                </button>
+                <button type="submit" className="primary-button">
+                    Salvar
+                </button>
+            </div>
         </form>
     );
 };
