@@ -147,17 +147,17 @@ body.dark-mode .nav-link:hover {
 /* Estilos genéricos para tabelas */
 .custom-table {
   width: 100%;
-  border-collapse: collapse; /* Remove o espaço entre as células */
+  border-collapse: collapse; 
+  border-spacing: 0; 
 }
 
 .custom-table thead {
-  background-color: var(--background-color);
+  border-bottom: 2px solid var(--border-color); 
 }
 
 .custom-table th, .custom-table td {
   padding: 12px 15px;
   text-align: left;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .custom-table th {
@@ -168,7 +168,12 @@ body.dark-mode .nav-link:hover {
 }
 
 .custom-table tbody tr {
+  border-bottom: 1px solid var(--border-color); 
   transition: background-color 0.2s ease;
+}
+
+.custom-table tbody tr:last-child {
+  border-bottom: none;
 }
 
 .custom-table tbody tr:hover {
@@ -303,4 +308,34 @@ body.dark-mode .custom-table tbody tr:hover {
   100% {
     transform: rotate(360deg);
   }
+}
+
+
+/* Estilos para o Botão de Tema */
+.theme-toggle-button {
+  background-color: transparent;
+  border: none;
+  color: var(--secondary-text-color);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%; /* Para o fazer redondo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.theme-toggle-button:hover {
+  color: var(--primary-text-color);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .theme-toggle-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Controlar o tamanho do ícone SVG dentro do botão */
+.theme-toggle-button svg {
+  width: 22px;
+  height: 22px;
 }
