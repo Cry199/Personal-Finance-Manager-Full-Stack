@@ -8,6 +8,7 @@ import TransactionsPage from './features/transactions/pages/TransactionsPage';
 import MainLayout from './components/layout/MainLayout';
 import CategoriesPage from './features/categories/pages/CategoriesPage';
 import RecurringTransactionsPage from './features/recurring/pages/RecurringTransactionsPage';
+import { ThemeProvider } from './context/ThemeContext';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -50,9 +51,11 @@ const AppContent = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
