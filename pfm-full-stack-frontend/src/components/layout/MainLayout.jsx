@@ -16,6 +16,7 @@ const MainLayout = () => {
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/transactions">Transações</Link>
         <Link to="/categories">Categorias</Link>
+        <Link to="/recurring-transactions">Recorrentes</Link>
         <button onClick={handleLogout} style={{ marginLeft: 'auto' }}>Sair</button>
       </nav>
       <main style={{ padding: '20px' }}>
