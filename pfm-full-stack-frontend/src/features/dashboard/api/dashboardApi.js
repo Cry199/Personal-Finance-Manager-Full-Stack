@@ -7,3 +7,7 @@ export const getDashboardSummary = () => {
 export const getExpensesByCategory = () => {
   return api.get('/dashboard/expenses-by-category');
 };
+
+export const getMonthlySummary = () => {
+  return api.get('/dashboard/monthly-summary');
+};
