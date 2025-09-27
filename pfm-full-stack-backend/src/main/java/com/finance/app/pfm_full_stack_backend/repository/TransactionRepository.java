@@ -1,5 +1,6 @@
 package com.finance.app.pfm_full_stack_backend.repository;
 
+import com.finance.app.pfm_full_stack_backend.dto.dashboard.ExpenseByCategoryDTO;
 import com.finance.app.pfm_full_stack_backend.entity.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -31,4 +32,19 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
     );
 
     Page<Transaction> findAllByUserId(UUID userId, Pageable pageable);
+
+    @Query("""
+            SELECT new com.finance.app.pfm_full_stack_backend.dto.dashboard.ExpenseByCategoryDTO(c.name, COALESCE(SUM(t.amount), 0))
+            FROM Transaction t JOIN t.category c
+            WHERE t.user.id = :userId
+            AND t.type = 'EXPENSE'
+            AND t.date >= :startDate AND t.date <= :endDate
+            GROUP BY c.name
+            ORDER BY SUM(t.amount) DESC
+            """)
+    List<ExpenseByCategoryDTO> findExpensesByCategory(
+            UUID userId,
+            LocalDate startDate,
+            LocalDate endDate
+    );
 }
