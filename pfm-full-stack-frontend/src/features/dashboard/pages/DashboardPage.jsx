@@ -4,7 +4,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import styles from './DashboardPage.module.css';
+import './DashboardPage.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -62,16 +62,28 @@ const DashboardPage = () => {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
+      <div className="page-header">
+        <h2>Dashboard</h2>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        <div className={styles.summaryCard}>
+        <div className="summary-card">
           <h3>Resumo do Mês</h3>
-            <p>Receita Total: {summary.totalIncome}</p>
-            <p>Despesa Total: {summary.totalExpense}</p>
-            <p>Saldo: {summary.balance}</p>
+          <p>
+            Receita Total:{' '}
+            {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary.totalIncome)}
+          </p>
+          <p>
+            Despesa Total:{' '}
+            {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary.totalExpense)}
+          </p>
+          <p>
+            Saldo:{' '}
+            {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary.balance)}
+          </p>
         </div>
-        <div className="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
+
+        <div className="md:col-span-2 chart-container">
           <h3 className="text-lg font-semibold mb-4">Despesas por Categoria</h3>
           <div className="max-w-md mx-auto">
             {expenseData.labels.length > 0 ? (
@@ -81,6 +93,7 @@ const DashboardPage = () => {
             )}
           </div>
         </div>
+
       </div>
     </div>
   );
