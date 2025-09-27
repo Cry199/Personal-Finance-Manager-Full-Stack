@@ -2,6 +2,7 @@ package com.finance.app.pfm_full_stack_backend.controller.dashboard;
 
 import com.finance.app.pfm_full_stack_backend.dto.dashboard.DashboardSummaryDTO;
 import com.finance.app.pfm_full_stack_backend.dto.dashboard.ExpenseByCategoryDTO;
+import com.finance.app.pfm_full_stack_backend.dto.dashboard.MonthlySummaryDTO;
 import com.finance.app.pfm_full_stack_backend.service.dashboard.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,16 @@ public class DashboardController
     }
 
     @GetMapping("/expenses-by-category")
-    public ResponseEntity<List<ExpenseByCategoryDTO>> getExpensesByCategory() {
+    public ResponseEntity<List<ExpenseByCategoryDTO>> getExpensesByCategory()
+    {
         List<ExpenseByCategoryDTO> data = dashboardService.getExpensesByCategoryForCurrentMonth();
         return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/monthly-summary")
+    public ResponseEntity<List<MonthlySummaryDTO>> getMonthlySummary()
+    {
+        List<MonthlySummaryDTO> summary = dashboardService.getMonthlySummaryForLast6Months();
+        return ResponseEntity.ok(summary);
     }
 }
