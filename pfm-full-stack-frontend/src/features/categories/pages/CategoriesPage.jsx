@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getCategories, createCategory } from '../api/categoryApi';
+import './CategoriesPage.css';
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
@@ -29,7 +30,7 @@ const CategoriesPage = () => {
     try {
       await createCategory({ name: newCategoryName });
       setNewCategoryName('');
-      fetchCategories(); 
+      fetchCategories();
     } catch (error) {
       console.error('Erro ao criar categoria:', error);
       alert('Não foi possível criar a categoria.');
@@ -42,25 +43,48 @@ const CategoriesPage = () => {
 
   return (
     <div>
-      <h2>Gerir Categorias</h2>
+      <div className="page-header">
+        <h2>Gerir Categorias</h2>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-        <h3>Criar Nova Categoria</h3>
-        <input
-          type="text"
-          value={newCategoryName}
-          onChange={(e) => setNewCategoryName(e.target.value)}
-          placeholder="Nome da categoria"
-        />
-        <button type="submit">Adicionar</button>
-      </form>
+      <div className="categories-container">
+        {/* Coluna do Formulário */}
+        <div className="category-form-card">
+          <h3>Criar Nova Categoria</h3>
+          <form onSubmit={handleSubmit}>
+            <div className="form-field">
+              <label htmlFor="category-name">Nome da categoria</label>
+              <input
+                id="category-name"
+                type="text"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                className="input-field"
+              />
+            </div>
+            <button type="submit" className="primary-button" style={{ marginTop: '1rem' }}>
+              Adicionar
+            </button>
+          </form>
+        </div>
 
-      <h3>Categorias Existentes</h3>
-      <ul>
-        {categories.map((category) => (
-          <li key={category.id}>{category.name}</li>
-        ))}
-      </ul>
+        {/* Coluna da Lista */}
+        <div className="category-list-card">
+          <h3>Categorias Existentes</h3>
+          {categories.length > 0 ? (
+            <ul className="category-list">
+              {categories.map((category) => (
+                <li key={category.id} className="category-list-item">
+                  <span>{category.name}</span>
+                  {/* Aqui podemos adicionar botões de editar/apagar no futuro */}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Ainda não tem categorias criadas.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
