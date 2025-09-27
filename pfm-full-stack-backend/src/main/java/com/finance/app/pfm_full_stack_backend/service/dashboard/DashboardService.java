@@ -1,6 +1,7 @@
 package com.finance.app.pfm_full_stack_backend.service.dashboard;
 
 import com.finance.app.pfm_full_stack_backend.dto.dashboard.DashboardSummaryDTO;
+import com.finance.app.pfm_full_stack_backend.dto.dashboard.ExpenseByCategoryDTO;
 import com.finance.app.pfm_full_stack_backend.entity.Transaction;
 import com.finance.app.pfm_full_stack_backend.entity.User;
 import com.finance.app.pfm_full_stack_backend.repository.TransactionRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 @Service
 public class DashboardService
@@ -43,5 +45,15 @@ public class DashboardService
         BigDecimal balance = totalIncome.subtract(totalExpense);
 
         return new DashboardSummaryDTO(totalIncome, totalExpense, balance);
+    }
+
+    public List<ExpenseByCategoryDTO> getExpensesByCategoryForCurrentMonth() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endDate = today.with(TemporalAdjusters.lastDayOfMonth());
+
+        return transactionRepository.findExpensesByCategory(user.getId(), startDate, endDate);
     }
 }
