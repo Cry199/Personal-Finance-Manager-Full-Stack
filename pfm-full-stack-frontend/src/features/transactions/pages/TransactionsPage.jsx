@@ -100,10 +100,12 @@ const TransactionsPage = () => {
     }
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="content-card">
+            <div className="page-header">
                 <h2>Minhas Transações</h2>
-                <button onClick={handleAddNew}>Adicionar Nova Transação</button>
+                <button onClick={handleAddNew} className="primary-button">
+                    Adicionar Nova
+                </button>
             </div>
 
             <Modal open={isModalOpen} onClose={closeModal}>
@@ -114,28 +116,30 @@ const TransactionsPage = () => {
                 />
             </Modal>
 
-            <table>
+            <table className="custom-table">
                 <thead>
                     <tr>
                         <th>Descrição</th>
                         <th>Valor</th>
                         <th>Data</th>
                         <th>Tipo</th>
-                        <th>Ações</th>
+                        <th>Categoria</th>
+                        <th style={{ textAlign: 'right' }}>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     {transactions.map((t) => (
                         <tr key={t.id}>
                             <td>{t.description}</td>
-                            <td style={{ color: t.type === 'EXPENSE' ? 'red' : 'green' }}>
+                            <td style={{ color: t.type === 'EXPENSE' ? 'var(--error-color)' : 'var(--success-color)' }}>
                                 {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(t.amount)}
                             </td>
                             <td>{new Date(t.date).toLocaleDateString('pt-PT')}</td>
                             <td>{t.type === 'EXPENSE' ? 'Despesa' : 'Receita'}</td>
-                            <td>
-                                <button onClick={() => handleEdit(t)}>Editar</button>
-                                <button onClick={() => handleDelete(t.id)}>Apagar</button>
+                            <td>{t.category ? t.category.name : '-'}</td>
+                            <td className="actions-cell">
+                                <button onClick={() => handleEdit(t)} className="edit-button">Editar</button>
+                                <button onClick={() => handleDelete(t.id)} className="delete-button">Apagar</button>
                             </td>
                         </tr>
                     ))}

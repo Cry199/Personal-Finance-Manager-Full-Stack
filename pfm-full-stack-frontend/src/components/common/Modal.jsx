@@ -26,15 +26,26 @@ const Modal = ({ open, onClose, children }) => {
   if (!open) return null;
 
   return (
-    <>
-      <div style={overlayStyles} onClick={onClose} />
-      <div style={modalStyles}>
-        {children}
-        <button onClick={onClose} style={{ position: 'absolute', top: '10px', right: '10px' }}>
-          X
+    // Overlay
+    <div
+      onClick={onClose}
+      className="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center transition-opacity duration-300"
+    >
+      {/* Conteúdo do Modal */}
+      <div
+        onClick={(e) => e.stopPropagation()} // Impede que o clique dentro do modal o feche
+        className="bg-white rounded-lg shadow-xl p-6 z-50 w-full max-w-lg relative animate-fade-in-down"
+      >
+        {/* Botão de Fechar */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
+        {children}
       </div>
-    </>
+    </div>
   );
 };
 
