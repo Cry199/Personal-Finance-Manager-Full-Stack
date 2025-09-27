@@ -1,26 +1,78 @@
+/* Estilos principais para o layout do dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Uma coluna por padrão */
+  gap: 1.5rem;
+}
+
+/* Em ecrãs maiores, o layout adapta-se */
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+/* Cartão de resumo com o gradiente */
 .summary-card {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .summary-card h3 {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: white; 
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  margin-top: 0;
+  margin-bottom: 1rem;
 }
 
 .summary-card p {
-    color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0.5rem 0;
+  font-size: 1rem;
 }
 
-/* Container do gráfico */
+/* Container genérico para os gráficos */
 .chart-container {
   background-color: var(--surface-color);
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-container h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-text-color);
+}
+
+
+.chart-wrapper {
+  position: relative; 
+  flex-grow: 1;      
+  min-height: 300px; 
+}
+
+/* Layout para o gráfico de barras */
+@media (min-width: 1024px) {
+    .bar-chart-container {
+        grid-column: 1 / -1; 
+    }
+}
+
+/* Mensagem para quando não há dados */
+.no-data-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--secondary-text-color);
 }
