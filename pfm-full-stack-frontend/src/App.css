@@ -113,20 +113,6 @@ body.dark-mode .nav-link:hover {
   padding: 0 2rem;
 }
 
-Claro! Com o layout principal e a navegação já estilizados com o seu CSS personalizado, a aplicação já tem uma cara muito mais profissional.
-
-O próximo passo lógico é aplicar um estilo consistente ao conteúdo principal das páginas, especialmente aos elementos que mais se repetem, como as tabelas e os cartões de conteúdo.
-
-Vamos criar um conjunto de classes genéricas para estes elementos e aplicá-las à página de Transações como nosso principal exemplo.
-
-Próximos Passos: Estilizar as Tabelas e Conteúdo das Páginas
-1. Adicionar Estilos Genéricos para Cartões e Tabelas ao App.css
-Vamos adicionar classes ao App.css que poderemos reutilizar em todas as páginas que mostram dados.
-
-Ficheiro: src/App.css (adicione este código ao final do ficheiro)
-
-CSS
-
 /* Estilo para o 'cartão' que envolve o conteúdo da página */
 .content-card {
   background-color: var(--surface-color);
@@ -139,8 +125,9 @@ CSS
 
 .page-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* Alinha os itens à esquerda */
   align-items: center;
+  gap: 1rem; /* Adiciona um espaço entre o título e o botão */
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
@@ -149,6 +136,12 @@ CSS
 .page-header h2 {
   font-size: 1.5rem;
   font-weight: bold;
+  margin: 0; /* Remove a margem padrão do h2 */
+}
+
+/* Faz o botão alinhar-se à direita */
+.page-header .primary-button {
+  margin-left: auto; 
 }
 
 /* Estilos genéricos para tabelas */
@@ -208,17 +201,6 @@ body.dark-mode .custom-table tbody tr:hover {
   color: var(--error-color);
 }
 
-Com o layout principal e as tabelas já estilizados, a sua aplicação está a ganhar uma identidade visual forte e consistente. O próximo passo é levar essa consistência para os elementos interativos mais importantes: os formulários e a janela modal onde eles aparecem.
-
-Vamos finalizar o design base da aplicação, garantindo que a experiência de adicionar ou editar dados seja tão limpa e profissional quanto a de visualizá-los.
-
-Próximos Passos: Estilizar o Modal e os Formulários
-1. Adicionar Estilos para o Modal e Formulários ao App.css
-Vamos criar as classes necessárias para o nosso pop-up (modal) e refinar os estilos dos campos do formulário.
-
-Ficheiro: src/App.css (adicione este código ao final do ficheiro)
-
-CSS
 
 /* Estilos para o Modal */
 .modal-overlay {
@@ -294,4 +276,31 @@ CSS
   background-color: transparent;
   color: var(--primary-text-color);
   cursor: pointer;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--secondary-text-color);
+  border-bottom-color: var(--primary-color);
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
