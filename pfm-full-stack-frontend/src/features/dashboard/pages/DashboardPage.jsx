@@ -1,44 +1,62 @@
 import { useEffect, useState } from 'react';
-import { getDashboardSummary, getExpensesByCategory } from '../api/dashboardApi';
+import toast from 'react-hot-toast';
+import { getDashboardSummary, getExpensesByCategory, getMonthlySummary } from '../api/dashboardApi';
 import { useAuth } from '../../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
+import { Pie, Bar } from 'react-chartjs-2';
+import Spinner from '../../../components/common/Spinner';
 import './DashboardPage.css';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
 const DashboardPage = () => {
   const [summary, setSummary] = useState(null);
-  const [expenseData, setExpenseData] = useState(null);
-  const { user, logout } = useAuth();
-
-  const navigate = useNavigate();
+  const [pieData, setPieData] = useState(null);
+  const [barData, setBarData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const summaryRes = await getDashboardSummary();
+        const [summaryRes, expenseRes, monthlyRes] = await Promise.all([
+          getDashboardSummary(),
+          getExpensesByCategory(),
+          getMonthlySummary()
+        ]);
+
         setSummary(summaryRes.data);
 
-        const expenseRes = await getExpensesByCategory();
-        // Chart.js
-        const chartData = {
+        setPieData({
           labels: expenseRes.data.map(d => d.categoryName),
           datasets: [{
-            label: 'Despesas por Categoria',
             data: expenseRes.data.map(d => d.totalAmount),
-            backgroundColor: [ // Cores aleatórias para o gráfico
-              '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-            ],
-            hoverBackgroundColor: [
-              '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-            ]
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
           }]
-        };
-        setExpenseData(chartData);
+        });
+
+        setBarData({
+          labels: monthlyRes.data.map(d => d.month),
+          datasets: [
+            {
+              label: 'Receitas',
+              data: monthlyRes.data.map(d => d.totalIncome),
+              backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            },
+            {
+              label: 'Despesas',
+              data: monthlyRes.data.map(d => d.totalExpense),
+              backgroundColor: 'rgba(255, 99, 132, 0.6)',
+            }
+          ]
+        });
+
       } catch (error) {
         console.error('Erro ao buscar dados do dashboard:', error);
+        toast.error("Não foi possível carregar os dados do dashboard.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -47,17 +65,8 @@ const DashboardPage = () => {
     }
   }, [user]);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  if (!summary || !expenseData) {
-    return <div>A carregar...</div>;
-  }
-
-  if (!summary) {
-    return <div>Carregando...</div>;
+  if (loading) {
+    return <Spinner />;
   }
 
   return (
@@ -65,35 +74,45 @@ const DashboardPage = () => {
       <div className="page-header">
         <h2>Dashboard</h2>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
+      <div className="dashboard-grid">
         <div className="summary-card">
-          <h3>Resumo do Mês</h3>
+          <h3>Resumo do Mês Atual</h3>
           <p>
             Receita Total:{' '}
-            {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary.totalIncome)}
+            {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary?.totalIncome || 0)}
           </p>
           <p>
             Despesa Total:{' '}
-            {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary.totalExpense)}
+            {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary?.totalExpense || 0)}
           </p>
           <p>
             Saldo:{' '}
-            {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary.balance)}
+            {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary?.balance || 0)}
           </p>
         </div>
 
-        <div className="md:col-span-2 chart-container">
-          <h3 className="text-lg font-semibold mb-4">Despesas por Categoria</h3>
-          <div className="max-w-md mx-auto">
-            {expenseData.labels.length > 0 ? (
-              <Pie data={expenseData} />
-            ) : (
-              <p>Não há despesas com categoria para mostrar.</p>
-            )}
-          </div>
+        <div className="chart-container">
+          <h3>Despesas por Categoria</h3>
+          {pieData && pieData.labels.length > 0 ? (
+            <div className="chart-wrapper">
+              <Pie data={pieData} options={{ maintainAspectRatio: false, responsive: true }} />
+            </div>
+          ) : (
+            <p className="no-data-message">Não há despesas com categoria para mostrar.</p>
+          )}
         </div>
 
+        <div className="chart-container bar-chart-container">
+          <h3>Receitas vs. Despesas (Últimos 6 Meses)</h3>
+          {barData ? (
+            <div className="chart-wrapper">
+              <Bar data={barData} options={{ maintainAspectRatio: false, responsive: true }} />
+            </div>
+          ) : (
+            <p className="no-data-message">Não há dados para mostrar.</p>
+          )}
+        </div>
       </div>
     </div>
   );
