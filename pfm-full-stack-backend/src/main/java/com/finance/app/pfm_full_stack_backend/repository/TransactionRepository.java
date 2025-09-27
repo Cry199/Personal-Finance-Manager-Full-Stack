@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface TransactionRepository extends JpaRepository<Transaction, UUID>, JpaSpecificationExecutor<Transaction>
@@ -47,4 +48,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
             LocalDate startDate,
             LocalDate endDate
     );
+
+    @Query("""
+        SELECT 
+            new map(
+                SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE 0 END) as income,
+                SUM(CASE WHEN t.type = 'EXPENSE' THEN t.amount ELSE 0 END) as expense
+            )
+        FROM Transaction t
+        WHERE t.user.id = :userId 
+        AND t.date >= :startDate AND t.date <= :endDate
+    """)
+    Map<String, BigDecimal> getMonthlySummary(UUID userId, LocalDate startDate, LocalDate endDate);
 }
