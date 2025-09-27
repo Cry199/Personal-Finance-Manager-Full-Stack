@@ -70,7 +70,7 @@ const RecurringTransactionsPage = () => {
     const closeModal = () => {
         setIsModalOpen(false);
         setEditingRecurring(null);
-    }
+    };
 
     const periodMapping = {
         DAILY: 'Diária',
