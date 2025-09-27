@@ -1,20 +1,41 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Define as variáveis de cor para o tema claro (padrão) */
+:root {
+  --background-color: #fafafa;
+  --surface-color: #ffffff;
+  --primary-text-color: #262626;
+  --secondary-text-color: #8e8e8e;
+  --primary-color: #3897f0;
+  --button-text-color: #ffffff;
+  --border-color: #dbdbdb;
+  --error-color: #ed4956;
+  --success-color: #28a745;
+}
 
-@layer utilities {
-  .animate-fade-in-down {
-    animation: fade-in-down 0.3s ease-out;
-  }
+/* Define as variáveis que serão usadas quando o modo escuro estiver ativo */
+body.dark-mode {
+  --background-color: #121212;
+  --surface-color: #1e1e1e;
+  --primary-text-color: #e0e0e0;
+  --secondary-text-color: #a0a0a0;
+  --primary-color: #4dabf5;
+  --button-text-color: #1e1e1e;
+  --border-color: #363636;
+}
 
-  @keyframes fade-in-down {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+/* Estilos globais que USAM as variáveis */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background-color: var(--background-color);
+  color: var(--primary-text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#root {
+  width: 100%;
 }
