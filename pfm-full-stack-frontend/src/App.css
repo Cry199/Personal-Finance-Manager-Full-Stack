@@ -339,3 +339,39 @@ body.dark-mode .theme-toggle-button:hover {
   width: 22px;
   height: 22px;
 }
+
+/* Estilos para o Toast de Confirmação */
+.confirmation-toast {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.confirmation-toast p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.confirmation-toast div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.confirmation-toast button {
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+}
+
+.confirm-button {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.cancel-button {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--primary-text-color);
+}
