@@ -9,3 +9,13 @@ export const getRecurringTransactions = () => {
 export const deleteRecurringTransaction = (id) => {
   return api.delete(`/recurring-transactions/${id}`);
 };
+
+// Criar uma transação recorrente
+export const createRecurringTransaction = (data) => {
+  return api.post('/recurring-transactions', data);
+};
+
+// Editar uma transação recorrente
+export const updateRecurringTransaction = (id, data) => {
+  return api.put(`/recurring-transactions/${id}`, data);
+};
