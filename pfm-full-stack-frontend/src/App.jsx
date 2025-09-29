@@ -9,6 +9,7 @@ import MainLayout from './components/layout/MainLayout';
 import CategoriesPage from './features/categories/pages/CategoriesPage';
 import RecurringTransactionsPage from './features/recurring/pages/RecurringTransactionsPage';
 import { ThemeProvider } from './context/ThemeContext';
+import { Toaster } from 'react-hot-toast';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -23,10 +24,22 @@ const PrivateRoute = ({ children }) => {
 const AppContent = () => {
   return (
     <Router>
+
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: 'var(--surface-color)',
+            color: 'var(--primary-text-color)',
+            border: '1px solid var(--border-color)',
+          },
+        }}
+      />
+
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        
+
 
         {/* Rotas Protegidas com Layout */}
         <Route
