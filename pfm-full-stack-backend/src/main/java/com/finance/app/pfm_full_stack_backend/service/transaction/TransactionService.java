@@ -1,5 +1,7 @@
 package com.finance.app.pfm_full_stack_backend.service.transaction;
 
+import com.finance.app.pfm_full_stack_backend.dto.exception.OperationNotPermittedException;
+import com.finance.app.pfm_full_stack_backend.dto.exception.ResourceNotFoundException;
 import com.finance.app.pfm_full_stack_backend.dto.transaction.CreateTransactionDTO;
 import com.finance.app.pfm_full_stack_backend.dto.transaction.TransactionResponseDTO;
 import com.finance.app.pfm_full_stack_backend.dto.transaction.UpdateTransactionDTO;
@@ -62,11 +64,11 @@ public class TransactionService
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         var transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transação não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
 
         if (!transaction.getUser().getId().equals(user.getId()))
         {
-            throw new SecurityException("Transação não encontrada");
+            throw new OperationNotPermittedException("Acesso negado: esta transação não é sua.");
         }
 
         return new TransactionResponseDTO(transaction);
@@ -96,12 +98,12 @@ public class TransactionService
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         var transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transação não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
 
 
         if (!transaction.getUser().getId().equals(user.getId()))
         {
-            throw new SecurityException("Acesso negado: você não é o dono desta transação.");
+            throw new OperationNotPermittedException("Acesso negado: você não é o dono desta transação.");
         }
 
         if (data.description() != null)
@@ -128,11 +130,11 @@ public class TransactionService
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         var transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transação não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
 
         if (!transaction.getUser().getId().equals(user.getId()))
         {
-            throw new SecurityException("Transação não encontrada");
+            throw new OperationNotPermittedException("Acesso negado: esta transação não é sua.");
         }
 
         transactionRepository.delete(transaction);
