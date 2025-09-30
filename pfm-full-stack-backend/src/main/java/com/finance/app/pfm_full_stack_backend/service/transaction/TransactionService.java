@@ -1,5 +1,7 @@
 package com.finance.app.pfm_full_stack_backend.service.transaction;
 
+import com.finance.app.pfm_full_stack_backend.dto.dashboard.ExpenseByCategoryDTO;
+import com.finance.app.pfm_full_stack_backend.dto.dashboard.IncomeBySourceDTO;
 import com.finance.app.pfm_full_stack_backend.dto.exception.OperationNotPermittedException;
 import com.finance.app.pfm_full_stack_backend.dto.exception.ResourceNotFoundException;
 import com.finance.app.pfm_full_stack_backend.dto.transaction.CreateTransactionDTO;
@@ -12,12 +14,15 @@ import com.finance.app.pfm_full_stack_backend.repository.CategoryRepository;
 import com.finance.app.pfm_full_stack_backend.repository.TransactionRepository;
 import com.finance.app.pfm_full_stack_backend.specification.transaction.TransactionSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -138,5 +143,29 @@ public class TransactionService
         }
 
         transactionRepository.delete(transaction);
+    }
+
+    public List<ExpenseByCategoryDTO> getTopExpensesForCurrentYear(int limit)
+    {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.with(TemporalAdjusters.firstDayOfYear());
+        LocalDate endDate = today.with(TemporalAdjusters.lastDayOfYear());
+
+        Pageable pageable = PageRequest.of(0, limit);
+
+        return transactionRepository.findTopExpensesByCategory(user.getId(), startDate, endDate, pageable);
+    }
+
+    public List<IncomeBySourceDTO> getTopIncomeSourcesForCurrentYear(int limit)
+    {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.with(TemporalAdjusters.firstDayOfYear());
+        LocalDate endDate = today.with(TemporalAdjusters.lastDayOfYear());
+
+        Pageable pageable = PageRequest.of(0, limit);
+
+        return transactionRepository.findTopIncomeSourcesByCategory(user.getId(), startDate, endDate, pageable);
     }
 }
