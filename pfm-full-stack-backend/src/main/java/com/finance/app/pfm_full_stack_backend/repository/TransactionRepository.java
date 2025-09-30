@@ -85,4 +85,19 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
             ORDER BY SUM(t.amount) DESC
             """)
     List<IncomeBySourceDTO> findTopIncomeSourcesByCategory(UUID userId, LocalDate startDate, LocalDate endDate, Pageable pageable);
+
+    @Query("""
+            SELECT 
+                new map(
+                    CAST(EXTRACT(ISODOW FROM t.date) as int) as dayOfWeek, 
+                    COALESCE(SUM(t.amount), 0) as total
+                )
+            FROM Transaction t
+            WHERE t.user.id = :userId
+            AND t.type = 'EXPENSE'
+            AND t.date >= :startDate AND t.date <= :endDate
+            GROUP BY dayOfWeek
+            ORDER BY dayOfWeek ASC
+            """)
+    List<Map<String, Object>> findExpensesByWeekday(UUID userId, LocalDate startDate, LocalDate endDate);
 }
