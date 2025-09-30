@@ -98,4 +98,39 @@ public class DashboardService
 
         return summaryList;
     }
+
+    public List<MonthlySummaryDTO> getIncomeVsExpenseForLast12Months()
+    {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<MonthlySummaryDTO> summaryList = new ArrayList<>();
+
+        LocalDate today = LocalDate.now();
+
+        for (int i = 0; i < 12; i++)
+        {
+            LocalDate date = today.minusMonths(i);
+            LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
+            LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
+
+            Map<String, BigDecimal> result = transactionRepository.getMonthlySummary(user.getId(), startDate, endDate);
+
+            BigDecimal totalIncome = result.get("income") != null ? result.get("income") : BigDecimal.ZERO;
+            BigDecimal totalExpense = result.get("expense") != null ? result.get("expense") : BigDecimal.ZERO;
+
+            String monthName = Month.of(date.getMonthValue()).getDisplayName(TextStyle.FULL, new Locale("pt",
+                    "BR"));
+
+            summaryList.add(new MonthlySummaryDTO(
+                    date.getYear(),
+                    date.getMonthValue(),
+                    monthName,
+                    totalIncome,
+                    totalExpense
+            ));
+        }
+
+        Collections.reverse(summaryList);
+
+        return summaryList;
+    }
 }
