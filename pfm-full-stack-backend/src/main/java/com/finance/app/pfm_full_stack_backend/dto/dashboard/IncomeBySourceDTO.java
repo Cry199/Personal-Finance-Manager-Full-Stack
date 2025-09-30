@@ -1,4 +1,8 @@
 package com.finance.app.pfm_full_stack_backend.dto.dashboard;
 
-public record IncomeBySourceDTO() {
-}
+import java.math.BigDecimal;
+
+public record IncomeBySourceDTO(
+        String categoryName,
+        BigDecimal totalAmount
+) { }
