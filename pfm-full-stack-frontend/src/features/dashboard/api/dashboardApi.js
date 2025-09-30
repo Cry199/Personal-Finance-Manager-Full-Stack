@@ -27,3 +27,7 @@ export const getTopIncomeSources = (limit = 5) => {
 export const getExpenseByWeekday = () => {
   return api.get('/dashboard/expense-by-weekday');
 };
+
+export const getYearlySummary = (year) => {
+  return api.get('/dashboard/yearly-summary', { params: { year } });
+};
