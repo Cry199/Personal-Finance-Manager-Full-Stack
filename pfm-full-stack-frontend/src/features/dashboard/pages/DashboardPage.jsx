@@ -8,6 +8,7 @@ import Spinner from '../../../components/common/Spinner';
 import RecentTransactions from '../components/RecentTransactions';
 import './DashboardPage.css';
 import { getErrorMessage } from '../../../utils/errorHandler';
+import { formatCurrency } from '../../../utils/formatting';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
@@ -89,7 +90,7 @@ const DashboardPage = () => {
             </div>
             <div className="summary-text">
               <p>Receita do Mês</p>
-              <span>{new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary?.totalIncome || 0)}</span>
+              <span>{formatCurrency(summary?.totalIncome)}</span>
             </div>
           </div>
           <div className="summary-item expense">
@@ -100,7 +101,7 @@ const DashboardPage = () => {
             </div>
             <div className="summary-text">
               <p>Despesa do Mês</p>
-              <span>{new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary?.totalExpense || 0)}</span>
+              <span>{formatCurrency(summary?.totalExpense)}</span>
             </div>
           </div>
           <div className="summary-item balance">
@@ -111,7 +112,7 @@ const DashboardPage = () => {
             </div>
             <div className="summary-text">
               <p>Saldo Atual</p>
-              <span>{new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(summary?.balance || 0)}</span>
+              <span>{formatCurrency(summary?.currentBalance)}</span>
             </div>
           </div>
         </div>

@@ -3,9 +3,8 @@ import Modal from '../../../components/common/Modal';
 import RecurringTransactionForm from '../components/RecurringTransactionForm';
 import ConfirmationModal from '../../../components/common/ConfirmationModal';
 import toast from 'react-hot-toast';
-import { getErrorMessage } from '../../../utils/errorHandler'; 
-
-
+import { getErrorMessage } from '../../../utils/errorHandler';
+import { formatCurrency } from '../../../utils/formatting';
 
 import {
     getRecurringTransactions,
@@ -147,7 +146,7 @@ return (
             <tr key={r.id}>
               <td>{r.description}</td>
               <td style={{ color: r.type === 'EXPENSE' ? 'var(--error-color)' : 'var(--success-color)' }}>
-                {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(r.amount)}
+                  {formatCurrency(r.amount)}
               </td>
               <td>{r.type === 'EXPENSE' ? 'Despesa' : 'Receita'}</td>
               <td>{periodMapping[r.period]}</td>

@@ -12,6 +12,7 @@ import TransactionForm from '../components/TransactionForm';
 import Spinner from '../../../components/common/Spinner';
 import ConfirmationModal from '../../../components/common/ConfirmationModal';
 import { getErrorMessage } from '../../../utils/errorHandler'; 
+import { formatCurrency } from '../../../utils/formatting';
 
 // Função para gerar as opções do ano
 const generateYearOptions = () => {
@@ -189,7 +190,7 @@ const TransactionsPage = () => {
                                 <tr key={t.id}>
                                     <td>{t.description}</td>
                                     <td style={{ color: t.type === 'EXPENSE' ? 'var(--error-color)' : 'var(--success-color)' }}>
-                                        {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(t.amount)}
+                                        {formatCurrency(t.amount)}
                                     </td>
                                     <td>{new Date(t.date).toLocaleDateString('pt-PT')}</td>
                                     <td>{t.type === 'EXPENSE' ? 'Despesa' : 'Receita'}</td>

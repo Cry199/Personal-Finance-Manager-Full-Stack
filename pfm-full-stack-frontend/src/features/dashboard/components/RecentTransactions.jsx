@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getTransactions } from '../../transactions/api/transactionApi';
 import { Link } from 'react-router-dom';
 import Spinner from '../../../components/common/Spinner';
+import { formatCurrency } from '../../../utils/formatting';
 
 const RecentTransactions = () => {
     const [transactions, setTransactions] = useState([]);
@@ -39,7 +40,7 @@ const RecentTransactions = () => {
                             </div>
                             <span className={`transaction-amount ${t.type.toLowerCase()}`}>
                                 {t.type === 'EXPENSE' ? '-' : '+'}
-                                {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(t.amount)}
+                                {formatCurrency(t.amount)}
                             </span>
                         </li>
                     ))}
