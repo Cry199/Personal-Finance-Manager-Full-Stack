@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import Modal from '../../../components/common/Modal';
 import RecurringTransactionForm from '../components/RecurringTransactionForm';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
 import toast from 'react-hot-toast';
 import { getErrorMessage } from '../../../utils/errorHandler'; 
+
 
 
 import {
@@ -17,6 +19,8 @@ const RecurringTransactionsPage = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingRecurring, setEditingRecurring] = useState(null);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [recurringToDelete, setRecurringToDelete] = useState(null);
 
     const fetchRecurring = async () => {
         try {
@@ -36,15 +40,24 @@ const RecurringTransactionsPage = () => {
         fetchRecurring();
     }, []);
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Tem a certeza que quer apagar esta regra recorrente?')) {
-            try {
-                await deleteRecurringTransaction(id);
+    const handleDeleteClick = (rec) => {
+        setRecurringToDelete(rec);
+        setIsConfirmModalOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (!recurringToDelete) return;
+
+        const promise = deleteRecurringTransaction(recurringToDelete.id);
+        toast.promise(promise, {
+            loading: 'A apagar regra...',
+            success: () => {
                 fetchRecurring();
-            } catch (error) {
-                console.error('Erro ao apagar regra recorrente:', error);
-            }
-        }
+                return <b>Regra recorrente apagada!</b>;
+            },
+            error: <b>Não foi possível apagar a regra.</b>,
+        });
+        closeConfirmModal();
     };
 
     const handleSave = async (recurringData) => {
@@ -77,6 +90,11 @@ const RecurringTransactionsPage = () => {
         setEditingRecurring(null);
     };
 
+    const closeConfirmModal = () => {
+        setIsConfirmModalOpen(false);
+        setRecurringToDelete(null);
+    };
+
     const periodMapping = {
         DAILY: 'Diária',
         WEEKLY: 'Semanal',
@@ -105,6 +123,14 @@ return (
         />
       </Modal>
 
+      <ConfirmationModal
+                open={isConfirmModalOpen}
+                onClose={closeConfirmModal}
+                onConfirm={handleConfirmDelete}
+                title="Confirmar Exclusão"
+                message={`Tem a certeza que quer apagar a regra recorrente "${recurringToDelete?.description}"?`}
+            />
+
       <table className="custom-table">
         <thead>
           <tr>
@@ -128,7 +154,7 @@ return (
               <td>{new Date(r.startDate).toLocaleDateString('pt-PT')}</td>
               <td className="actions-cell">
                 <button onClick={() => handleEdit(r)} className="edit-button">Editar</button>
-                <button onClick={() => handleDelete(r.id)} className="delete-button">Apagar</button>
+                <button onClick={() => handleDeleteClick(r)} className="delete-button">Apagar</button>
               </td>
             </tr>
           ))}

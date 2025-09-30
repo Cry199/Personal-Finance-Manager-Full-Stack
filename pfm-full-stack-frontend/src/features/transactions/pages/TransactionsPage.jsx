@@ -10,6 +10,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import Modal from '../../../components/common/Modal';
 import TransactionForm from '../components/TransactionForm';
 import Spinner from '../../../components/common/Spinner';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
 import { getErrorMessage } from '../../../utils/errorHandler'; 
 
 // Função para gerar as opções do ano
@@ -34,6 +35,8 @@ const TransactionsPage = () => {
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1,
     });
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [transactionToDelete, setTransactionToDelete] = useState(null);
 
     const yearOptions = generateYearOptions();
 
@@ -74,18 +77,24 @@ const TransactionsPage = () => {
         });
     };
     
-    const handleDelete = (id) => {
-        if (window.confirm('Tem a certeza que quer apagar esta transação?')) {
-            const promise = deleteTransaction(id);
-            toast.promise(promise, {
-                loading: 'A apagar...',
-                success: () => {
-                    fetchTransactions();
-                    return <b>Transação apagada!</b>;
-                },
-                error: <b>Não foi possível apagar.</b>,
-            });
-        }
+    const handleDeleteClick = (transaction) => {
+        setTransactionToDelete(transaction);
+        setIsConfirmModalOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (!transactionToDelete) return;
+
+        const promise = deleteTransaction(transactionToDelete.id);
+        toast.promise(promise, {
+            loading: 'A apagar...',
+            success: () => {
+                fetchTransactions(); // Recarrega a lista
+                return <b>Transação apagada!</b>;
+            },
+            error: <b>Não foi possível apagar.</b>,
+        });
+        closeConfirmModal();
     };
     
     const handleFilterChange = (e) => {
@@ -94,7 +103,7 @@ const TransactionsPage = () => {
             ...prevFilters,
             [name]: value ? parseInt(value) : null
         }));
-        setPage(0); // Volta para a primeira página ao mudar o filtro
+        setPage(0);
     };
 
     const handleEdit = (transaction) => {
@@ -110,6 +119,11 @@ const TransactionsPage = () => {
     const closeModal = () => {
         setIsModalOpen(false);
         setEditingTransaction(null);
+    };
+
+    const closeConfirmModal = () => {
+        setIsConfirmModalOpen(false);
+        setRecurringToDelete(null);
     };
 
     return (
@@ -146,6 +160,14 @@ const TransactionsPage = () => {
                     transactionToEdit={editingTransaction}
                 />
             </Modal>
+
+            <ConfirmationModal
+                open={isConfirmModalOpen}
+                onClose={closeConfirmModal}
+                onConfirm={handleConfirmDelete}
+                title="Confirmar Exclusão"
+                message={`Tem a certeza que quer apagar a transação "${transactionToDelete?.description}"?`}
+            />
             
             {loading ? (
                 <Spinner />
@@ -174,7 +196,7 @@ const TransactionsPage = () => {
                                     <td>{t.category ? t.category.name : '-'}</td>
                                     <td className="actions-cell">
                                         <button onClick={() => handleEdit(t)} className="edit-button">Editar</button>
-                                        <button onClick={() => handleDelete(t.id)} className="delete-button">Apagar</button>
+                                        <button onClick={() => handleDeleteClick(t)} className="delete-button">Apagar</button>
                                     </td>
                                 </tr>
                             ))}

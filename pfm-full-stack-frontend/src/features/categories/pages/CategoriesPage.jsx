@@ -4,13 +4,16 @@ import { getCategories, createCategory, updateCategory, deleteCategory } from '.
 import Modal from '../../../components/common/Modal';
 import CategoryForm from '../components/CategoryForm';
 import Spinner from '../../../components/common/Spinner';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
 import './CategoriesPage.css';
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
   const fetchCategories = async () => {
     try {
@@ -36,59 +39,58 @@ const CategoriesPage = () => {
     toast.promise(promise, {
       loading: 'A salvar...',
       success: () => {
-        closeModal();
-        fetchCategories(); // Recarrega a lista de categorias
+        closeFormModal();
+        fetchCategories();
         return <b>Categoria salva com sucesso!</b>;
       },
       error: <b>Não foi possível salvar a categoria.</b>,
     });
   };
-
-  const handleDelete = (id) => {
-    // Usar um toast de confirmação para uma melhor experiência
-    toast((t) => (
-      <div className="confirmation-toast">
-        <p>Tem a certeza que quer apagar?</p>
-        <div>
-          <button
-            className="confirm-button"
-            onClick={() => {
-              const deletePromise = deleteCategory(id);
-              toast.promise(deletePromise, {
-                loading: 'A apagar...',
-                success: () => {
-                  fetchCategories();
-                  return <b>Categoria apagada!</b>;
-                },
-                error: <b>Não foi possível apagar.</b>,
-              });
-              toast.dismiss(t.id);
-            }}
-          >
-            Apagar
-          </button>
-          <button className="cancel-button" onClick={() => toast.dismiss(t.id)}>
-            Cancelar
-          </button>
-        </div>
-      </div>
-    ));
+  
+  const handleDeleteClick = (category) => {
+    setCategoryToDelete(category);
+    setIsConfirmModalOpen(true);
   };
+
+  const handleConfirmDelete = () => {
+    if (!categoryToDelete) return;
+
+    const deletePromise = deleteCategory(categoryToDelete.id);
+
+    toast.promise(deletePromise, {
+      loading: 'A apagar...',
+      success: () => {
+        fetchCategories();
+        return <b>Categoria "{categoryToDelete.name}" apagada!</b>;
+      },
+      error: <b>Não foi possível apagar.</b>,
+    });
+    
+    closeConfirmModal();
+  };
+
 
   const openModalToEdit = (category) => {
     setEditingCategory(category);
-    setIsModalOpen(true);
+    setIsFormModalOpen(true);
   };
 
   const openModalToCreate = () => {
     setEditingCategory(null);
-    setIsModalOpen(true);
+    setIsFormModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeFormModal = () => {
+    setIsFormModalOpen(false);
     setEditingCategory(null);
   };
+
+  // 5. Função para fechar o modal de confirmação
+  const closeConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+    setCategoryToDelete(null);
+  };
+
 
   if (loading) {
     return <Spinner />;
@@ -112,7 +114,7 @@ const CategoriesPage = () => {
                 <span>{category.name}</span>
                 <div className="actions-cell">
                   <button onClick={() => openModalToEdit(category)} className="edit-button">Editar</button>
-                  <button onClick={() => handleDelete(category.id)} className="delete-button">Apagar</button>
+                  <button onClick={() => handleDeleteClick(category)} className="delete-button">Apagar</button>
                 </div>
               </li>
             ))}
@@ -122,13 +124,22 @@ const CategoriesPage = () => {
         )}
       </div>
 
-      <Modal open={isModalOpen} onClose={closeModal}>
+      {/* Modal para criar/editar */}
+      <Modal open={isFormModalOpen} onClose={closeFormModal}>
         <CategoryForm
           onSave={handleSave}
-          onClose={closeModal}
+          onClose={closeFormModal}
           categoryToEdit={editingCategory}
         />
       </Modal>
+
+      <ConfirmationModal
+        open={isConfirmModalOpen}
+        onClose={closeConfirmModal}
+        onConfirm={handleConfirmDelete}
+        title="Confirmar Exclusão"
+        message={`Tem a certeza que quer apagar a categoria "${categoryToDelete?.name}"? Esta ação não pode ser revertida.`}
+      />
     </div>
   );
 };
