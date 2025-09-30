@@ -6,6 +6,7 @@ import com.finance.app.pfm_full_stack_backend.dto.category.UpdateCategoryDTO;
 import com.finance.app.pfm_full_stack_backend.entity.Category;
 import com.finance.app.pfm_full_stack_backend.entity.User;
 import com.finance.app.pfm_full_stack_backend.repository.CategoryRepository;
+import com.finance.app.pfm_full_stack_backend.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class CategoryService
 {
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private TransactionRepository  transactionRepository;
 
     public Category createCategory(CreateCategoryDTO data)
     {
@@ -68,6 +72,13 @@ public class CategoryService
         if (!category.getUser().getId().equals(user.getId()))
         {
             throw new SecurityException("Acesso negado: não pode apagar esta categoria.");
+        }
+
+        long usageCount = transactionRepository.countByCategoryId(id);
+        if (usageCount > 0)
+        {
+            throw new IllegalStateException("Não é possível apagar a categoria '" + category.getName()
+                    "' porque está a ser utilizada por " + usageCount + " transação(ões).");
         }
 
         categoryRepository.delete(category);
