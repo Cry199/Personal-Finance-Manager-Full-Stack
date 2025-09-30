@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getCategories, createCategory } from '../api/categoryApi';
 import './CategoriesPage.css';
+import { getErrorMessage } from '../../../utils/errorHandler'; 
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
@@ -14,6 +15,8 @@ const CategoriesPage = () => {
       setCategories(response.data);
     } catch (error) {
       console.error('Erro ao buscar categorias:', error);
+      const errorMessage = getErrorMessage(error);
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
