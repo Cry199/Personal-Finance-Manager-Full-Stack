@@ -10,7 +10,6 @@ import { useAuth } from '../../../hooks/useAuth';
 import Modal from '../../../components/common/Modal';
 import TransactionForm from '../components/TransactionForm';
 import Spinner from '../../../components/common/Spinner';
-import toast from 'react-hot-toast';
 import { getErrorMessage } from '../../../utils/errorHandler'; 
 
 // Função para gerar as opções do ano
