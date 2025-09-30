@@ -38,5 +38,6 @@ jobs:
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/pfm-full-stack-frontend:latest \
             --platform managed \
             --region southamerica-east1 \
+            --port 80 \
             --allow-unauthenticated \
             --quiet
