@@ -10,9 +10,6 @@ import { useAuth } from '../../../hooks/useAuth';
 import Modal from '../../../components/common/Modal';
 import TransactionForm from '../components/TransactionForm';
 import Spinner from '../../../components/common/Spinner';
-import ConfirmationModal from '../../../components/common/ConfirmationModal';
-import { getErrorMessage } from '../../../utils/errorHandler'; 
-import { formatCurrency } from '../../../utils/formatting';
 
 // Função para gerar as opções do ano
 const generateYearOptions = () => {
@@ -36,8 +33,6 @@ const TransactionsPage = () => {
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1,
     });
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-    const [transactionToDelete, setTransactionToDelete] = useState(null);
 
     const yearOptions = generateYearOptions();
 
@@ -49,8 +44,7 @@ const TransactionsPage = () => {
             setTotalPages(response.data.totalPages);
         } catch (error) {
             console.error('Erro ao buscar transações:', error);
-            const errorMessage = getErrorMessage(error);
-            toast.error(errorMessage);
+            toast.error('Não foi possível carregar as transações.');
         } finally {
             setLoading(false);
         }
@@ -78,24 +72,18 @@ const TransactionsPage = () => {
         });
     };
     
-    const handleDeleteClick = (transaction) => {
-        setTransactionToDelete(transaction);
-        setIsConfirmModalOpen(true);
-    };
-
-    const handleConfirmDelete = () => {
-        if (!transactionToDelete) return;
-
-        const promise = deleteTransaction(transactionToDelete.id);
-        toast.promise(promise, {
-            loading: 'A apagar...',
-            success: () => {
-                fetchTransactions(); // Recarrega a lista
-                return <b>Transação apagada!</b>;
-            },
-            error: <b>Não foi possível apagar.</b>,
-        });
-        closeConfirmModal();
+    const handleDelete = (id) => {
+        if (window.confirm('Tem a certeza que quer apagar esta transação?')) {
+            const promise = deleteTransaction(id);
+            toast.promise(promise, {
+                loading: 'A apagar...',
+                success: () => {
+                    fetchTransactions();
+                    return <b>Transação apagada!</b>;
+                },
+                error: <b>Não foi possível apagar.</b>,
+            });
+        }
     };
     
     const handleFilterChange = (e) => {
@@ -104,7 +92,7 @@ const TransactionsPage = () => {
             ...prevFilters,
             [name]: value ? parseInt(value) : null
         }));
-        setPage(0);
+        setPage(0); // Volta para a primeira página ao mudar o filtro
     };
 
     const handleEdit = (transaction) => {
@@ -161,14 +149,6 @@ const TransactionsPage = () => {
                     transactionToEdit={editingTransaction}
                 />
             </Modal>
-
-            <ConfirmationModal
-                open={isConfirmModalOpen}
-                onClose={closeConfirmModal}
-                onConfirm={handleConfirmDelete}
-                title="Confirmar Exclusão"
-                message={`Tem a certeza que quer apagar a transação "${transactionToDelete?.description}"?`}
-            />
             
             {loading ? (
                 <Spinner />
@@ -190,14 +170,14 @@ const TransactionsPage = () => {
                                 <tr key={t.id}>
                                     <td>{t.description}</td>
                                     <td style={{ color: t.type === 'EXPENSE' ? 'var(--error-color)' : 'var(--success-color)' }}>
-                                        {formatCurrency(t.amount)}
+                                        {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(t.amount)}
                                     </td>
                                     <td>{new Date(t.date).toLocaleDateString('pt-PT')}</td>
                                     <td>{t.type === 'EXPENSE' ? 'Despesa' : 'Receita'}</td>
                                     <td>{t.category ? t.category.name : '-'}</td>
                                     <td className="actions-cell">
                                         <button onClick={() => handleEdit(t)} className="edit-button">Editar</button>
-                                        <button onClick={() => handleDeleteClick(t)} className="delete-button">Apagar</button>
+                                        <button onClick={() => handleDelete(t.id)} className="delete-button">Apagar</button>
                                     </td>
                                 </tr>
                             ))}
