@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
-import { getCategories, createCategory } from '../api/categoryApi';
+import toast from 'react-hot-toast';
+import { getCategories, createCategory, updateCategory, deleteCategory } from '../api/categoryApi';
+import Modal from '../../../components/common/Modal';
+import CategoryForm from '../components/CategoryForm';
+import Spinner from '../../../components/common/Spinner';
 import './CategoriesPage.css';
-import { getErrorMessage } from '../../../utils/errorHandler'; 
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
-  const [newCategoryName, setNewCategoryName] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
 
   const fetchCategories = async () => {
     try {
@@ -14,9 +18,7 @@ const CategoriesPage = () => {
       const response = await getCategories();
       setCategories(response.data);
     } catch (error) {
-      console.error('Erro ao buscar categorias:', error);
-      const errorMessage = getErrorMessage(error);
-      alert(errorMessage);
+      toast.error('Não foi possível carregar as categorias.');
     } finally {
       setLoading(false);
     }
@@ -26,68 +28,107 @@ const CategoriesPage = () => {
     fetchCategories();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!newCategoryName.trim()) return; // Não criar categorias vazias
+  const handleSave = (categoryData) => {
+    const promise = editingCategory
+      ? updateCategory(editingCategory.id, categoryData)
+      : createCategory(categoryData);
 
-    try {
-      await createCategory({ name: newCategoryName });
-      setNewCategoryName('');
-      fetchCategories();
-    } catch (error) {
-      console.error('Erro ao criar categoria:', error);
-      alert('Não foi possível criar a categoria.');
-    }
+    toast.promise(promise, {
+      loading: 'A salvar...',
+      success: () => {
+        closeModal();
+        fetchCategories(); // Recarrega a lista de categorias
+        return <b>Categoria salva com sucesso!</b>;
+      },
+      error: <b>Não foi possível salvar a categoria.</b>,
+    });
+  };
+
+  const handleDelete = (id) => {
+    // Usar um toast de confirmação para uma melhor experiência
+    toast((t) => (
+      <div className="confirmation-toast">
+        <p>Tem a certeza que quer apagar?</p>
+        <div>
+          <button
+            className="confirm-button"
+            onClick={() => {
+              const deletePromise = deleteCategory(id);
+              toast.promise(deletePromise, {
+                loading: 'A apagar...',
+                success: () => {
+                  fetchCategories();
+                  return <b>Categoria apagada!</b>;
+                },
+                error: <b>Não foi possível apagar.</b>,
+              });
+              toast.dismiss(t.id);
+            }}
+          >
+            Apagar
+          </button>
+          <button className="cancel-button" onClick={() => toast.dismiss(t.id)}>
+            Cancelar
+          </button>
+        </div>
+      </div>
+    ));
+  };
+
+  const openModalToEdit = (category) => {
+    setEditingCategory(category);
+    setIsModalOpen(true);
+  };
+
+  const openModalToCreate = () => {
+    setEditingCategory(null);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingCategory(null);
   };
 
   if (loading) {
-    return <div>A carregar categorias...</div>;
+    return <Spinner />;
   }
 
   return (
     <div>
       <div className="page-header">
         <h2>Gerir Categorias</h2>
+        <button onClick={openModalToCreate} className="primary-button">
+          Adicionar Nova
+        </button>
       </div>
 
-      <div className="categories-container">
-        {/* Coluna do Formulário */}
-        <div className="category-form-card">
-          <h3>Criar Nova Categoria</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="form-field">
-              <label htmlFor="category-name">Nome da categoria</label>
-              <input
-                id="category-name"
-                type="text"
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                className="input-field"
-              />
-            </div>
-            <button type="submit" className="primary-button" style={{ marginTop: '1rem' }}>
-              Adicionar
-            </button>
-          </form>
-        </div>
-
-        {/* Coluna da Lista */}
-        <div className="category-list-card">
-          <h3>Categorias Existentes</h3>
-          {categories.length > 0 ? (
-            <ul className="category-list">
-              {categories.map((category) => (
-                <li key={category.id} className="category-list-item">
-                  <span>{category.name}</span>
-                  {/* Aqui podemos adicionar botões de editar/apagar no futuro */}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>Ainda não tem categorias criadas.</p>
-          )}
-        </div>
+      <div className="content-card">
+        <h3>Categorias Existentes</h3>
+        {categories.length > 0 ? (
+          <ul className="category-list">
+            {categories.map((category) => (
+              <li key={category.id} className="category-list-item">
+                <span>{category.name}</span>
+                <div className="actions-cell">
+                  <button onClick={() => openModalToEdit(category)} className="edit-button">Editar</button>
+                  <button onClick={() => handleDelete(category.id)} className="delete-button">Apagar</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Ainda não tem categorias criadas.</p>
+        )}
       </div>
+
+      <Modal open={isModalOpen} onClose={closeModal}>
+        <CategoryForm
+          onSave={handleSave}
+          onClose={closeModal}
+          categoryToEdit={editingCategory}
+        />
+      </Modal>
     </div>
   );
 };
