@@ -70,12 +70,13 @@ public class RecurringTransactionJobService
                 ? calculateNextDueDate(rule.getLastExecutionDate(), rule.getPeriod())
                 : rule.getStartDate();
 
-        LocalDate latestExecutionDateForThisRule = rule.getLastExecutionDate();
+        LocalDate latestDateToUpdate = rule.getLastExecutionDate();
+        boolean hasCreatedTransactions = false;
 
-        while (!nextDueDate.isAfter(today))
-        {
+        while (!nextDueDate.isAfter(today)) {
             if (rule.getEndDate() == null || !nextDueDate.isAfter(rule.getEndDate()))
             {
+
                 Transaction newTransaction = new Transaction(
                         null,
                         rule.getDescription(),
@@ -86,25 +87,23 @@ public class RecurringTransactionJobService
                         rule.getCategory()
                 );
                 transactionRepository.save(newTransaction);
-                log.info("Transação recorrente criada: '{}' na data {}",
-                        newTransaction.getDescription(), nextDueDate);
+                log.info("Transação recorrente criada: '{}' na data {}", newTransaction.getDescription(), nextDueDate);
 
-                latestExecutionDateForThisRule = nextDueDate;
+                latestDateToUpdate = nextDueDate;
+                hasCreatedTransactions = true;
             }
-
-
             nextDueDate = calculateNextDueDate(nextDueDate, rule.getPeriod());
         }
 
-        if (latestExecutionDateForThisRule != null
-                && !latestExecutionDateForThisRule.equals(rule.getLastExecutionDate()))
+        if (hasCreatedTransactions)
         {
-            rule.setLastExecutionDate(latestExecutionDateForThisRule);
+            rule.setLastExecutionDate(latestDateToUpdate);
             recurringTransactionRepository.save(rule);
-            log.info("Regra recorrente '{}' atualizada com a última data de execução: {}", rule.getDescription(), latestExecutionDateForThisRule);
+            log.info("Regra recorrente '{}' atualizada com a última data de execução: {}",
+                    rule.getDescription(), latestDateToUpdate);
         }
     }
-
+    
     private LocalDate calculateNextDueDate(LocalDate currentDate, RecurringTransaction.RecurrencePeriod period)
     {
         return switch (period)
