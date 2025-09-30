@@ -1,8 +1,9 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import IncomeVsExpenseChart from '../components/IncomeVsExpenseChart';
 import TopExpensesChart from '../components/TopExpensesChart';
-import TopIncomeChart from '../components/TopIncomeChart'; 
+import TopIncomeChart from '../components/TopIncomeChart';
 import WeekdaySpendingChart from '../components/WeekdaySpendingChart';
+import YearlyComparisonChart from '../components/YearlyComparisonChart';
 import './ReportsPage.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -16,13 +17,17 @@ const ReportsPage = () => {
 
       <div className="reports-grid">
         <div className="report-item full-width">
+          <YearlyComparisonChart />
+        </div>
+
+        <div className="report-item full-width">
           <IncomeVsExpenseChart />
         </div>
 
         <div className="report-item">
           <TopExpensesChart />
         </div>
-        
+
         <div className="report-item">
           <TopIncomeChart />
         </div>
