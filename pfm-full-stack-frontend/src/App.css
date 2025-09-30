@@ -417,3 +417,19 @@ body.dark-mode .theme-toggle-button:hover {
 .navbar-logo {
   height: 32px;
 }
+
+.confirmation-modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.confirmation-modal-content p {
+  margin-bottom: 2rem;
+  color: var(--secondary-text-color);
+}
+
+
+.confirmation-modal-content .delete-button.primary-button {
+  background-color: var(--error-color);
+  color: white; 
+}
