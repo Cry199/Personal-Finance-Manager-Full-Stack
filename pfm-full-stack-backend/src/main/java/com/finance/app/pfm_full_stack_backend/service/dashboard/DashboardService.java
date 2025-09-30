@@ -136,4 +136,33 @@ public class DashboardService
 
         return summaryList;
     }
+
+    public List<MonthlySummaryDTO> getYearlySummary(int year)
+    {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<MonthlySummaryDTO> summaryList = new ArrayList<>();
+
+        for (int month = 1; month <= 12; month++) {
+            LocalDate date = LocalDate.of(year, month, 1);
+            LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
+            LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
+
+            Map<String, BigDecimal> result = transactionRepository.getMonthlySummary(user.getId(), startDate, endDate);
+
+            BigDecimal totalIncome = result.get("income") != null ? result.get("income") : BigDecimal.ZERO;
+            BigDecimal totalExpense = result.get("expense") != null ? result.get("expense") : BigDecimal.ZERO;
+
+            String monthName = Month.of(month).getDisplayName(TextStyle.FULL, new Locale("pt", "BR"));
+
+            summaryList.add(new MonthlySummaryDTO(
+                    year,
+                    month,
+                    monthName,
+                    totalIncome,
+                    totalExpense
+            ));
+        }
+
+        return summaryList;
+    }
 }
