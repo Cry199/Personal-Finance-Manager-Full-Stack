@@ -60,4 +60,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
         AND t.date >= :startDate AND t.date <= :endDate
     """)
     Map<String, BigDecimal> getMonthlySummary(UUID userId, LocalDate startDate, LocalDate endDate);
+
+    long countByCategoryId(UUID categoryId);
 }
