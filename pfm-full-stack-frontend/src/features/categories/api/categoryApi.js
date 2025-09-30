@@ -9,3 +9,13 @@ export const getCategories = () => {
 export const createCategory = (categoryData) => {
   return api.post('/categories', categoryData);
 };
+
+// Função para atualizar uma categoria
+export const updateCategory = (id, categoryData) => {
+  return api.put(`/categories/${id}`, categoryData);
+};
+
+// Função para apagar uma categoria
+export const deleteCategory = (id) => {
+  return api.delete(`/categories/${id}`);
+};
