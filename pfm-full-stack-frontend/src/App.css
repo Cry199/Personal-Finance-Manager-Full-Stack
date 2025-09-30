@@ -72,13 +72,6 @@ body.dark-mode .navbar {
   height: 64px;
 }
 
-.nav-brand {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--primary-text-color);
-  text-decoration: none;
-}
-
 .nav-links {
   display: flex;
   gap: 1rem;
@@ -409,4 +402,18 @@ body.dark-mode .theme-toggle-button:hover {
 .pagination-container span {
   font-size: 0.9rem;
   color: var(--secondary-text-color);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; 
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-text-color);
+  text-decoration: none;
+}
+
+.navbar-logo {
+  height: 32px;
 }
