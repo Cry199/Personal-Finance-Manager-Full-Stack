@@ -1,41 +1,80 @@
-/* Estilos principais para o layout do dashboard */
-.dashboard-grid {
+.summary-card {
+  background-color: var(--surface-color);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-color);
   display: grid;
-  grid-template-columns: 1fr; /* Uma coluna por padrão */
-  gap: 1.5rem;
+  grid-template-columns: 1fr; /* 1 coluna para layout vertical */
+  gap: 1rem;
 }
 
-/* Em ecrãs maiores, o layout adapta-se */
-@media (min-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr 2fr;
+@media (min-width: 900px) {
+  .summary-card {
+    grid-template-columns: repeat(3, 1fr); /* 3 colunas para ecrãs maiores */
   }
 }
 
-/* Cartão de resumo com o gradiente */
-.summary-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 10px;
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-.summary-card h3 {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: white;
-  margin-top: 0;
-  margin-bottom: 1rem;
+.summary-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.summary-card p {
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0.5rem 0;
-  font-size: 1rem;
+.summary-icon svg {
+  width: 24px;
+  height: 24px;
 }
 
-/* Container genérico para os gráficos */
+.summary-text p {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
+  color: var(--secondary-text-color);
+}
+
+.summary-text span {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-text-color);
+}
+
+.summary-item.income .summary-icon {
+  background-color: rgba(75, 192, 192, 0.2);
+  color: #4BC0C0;
+}
+
+.summary-item.expense .summary-icon {
+  background-color: rgba(255, 99, 132, 0.2);
+  color: #FF6384;
+}
+
+.summary-item.balance .summary-icon {
+  background-color: rgba(54, 162, 235, 0.2);
+  color: #36A2EB;
+}
+
+.summary-card-full-width {
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
 .chart-container {
   background-color: var(--surface-color);
   padding: 1.5rem;
@@ -54,25 +93,79 @@
   color: var(--primary-text-color);
 }
 
-
 .chart-wrapper {
   position: relative; 
   flex-grow: 1;      
   min-height: 300px; 
 }
 
-/* Layout para o gráfico de barras */
-@media (min-width: 1024px) {
-    .bar-chart-container {
-        grid-column: 1 / -1; 
-    }
+.bar-chart-container {
+  grid-column: 1 / -1; 
 }
 
-/* Mensagem para quando não há dados */
+
+.recent-transactions-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.transaction-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1; /* Ocupa o espaço disponível */
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-info span {
+  display: block;
+  font-weight: 500;
+}
+
+.transaction-info small {
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+}
+
+.transaction-amount.expense {
+  color: var(--error-color);
+  font-weight: 600;
+}
+
+.transaction-amount.income {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.view-all-link {
+  display: block;
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.view-all-link:hover {
+  text-decoration: underline;
+}
+
 .no-data-message {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: var(--secondary-text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--secondary-text-color);
 }
