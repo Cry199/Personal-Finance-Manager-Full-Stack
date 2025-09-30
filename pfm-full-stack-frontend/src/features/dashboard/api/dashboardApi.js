@@ -11,3 +11,7 @@ export const getExpensesByCategory = () => {
 export const getMonthlySummary = () => {
   return api.get('/dashboard/monthly-summary');
 };
+
+export const getIncomeVsExpenseSummary = () => {
+  return api.get('/dashboard/income-vs-expense');
+};
