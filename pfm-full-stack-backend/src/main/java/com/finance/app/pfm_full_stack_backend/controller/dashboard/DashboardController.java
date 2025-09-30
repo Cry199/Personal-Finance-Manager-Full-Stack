@@ -39,4 +39,11 @@ public class DashboardController
         List<MonthlySummaryDTO> summary = dashboardService.getMonthlySummaryForLast6Months();
         return ResponseEntity.ok(summary);
     }
+
+    @GetMapping("/income-vs-expense")
+    public ResponseEntity<List<MonthlySummaryDTO>> getIncomeVsExpenseSummary()
+    {
+        List<MonthlySummaryDTO> summary = dashboardService.getIncomeVsExpenseForLast12Months();
+        return ResponseEntity.ok(summary);
+    }
 }
