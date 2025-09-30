@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+const isProduction = window.location.hostname !== 'localhost';
+
+const baseURL = isProduction 
+  ? 'https://pfm-full-stack-api-faw777jkuq-rj.a.run.app'
+  : 'http://localhost:8080';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
+  baseURL: baseURL,
 });
 
 api.interceptors.request.use((config) => {
