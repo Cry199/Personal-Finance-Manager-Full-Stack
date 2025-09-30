@@ -1,5 +1,7 @@
 package com.finance.app.pfm_full_stack_backend.service.recurring;
 
+import com.finance.app.pfm_full_stack_backend.dto.exception.OperationNotPermittedException;
+import com.finance.app.pfm_full_stack_backend.dto.exception.ResourceNotFoundException;
 import com.finance.app.pfm_full_stack_backend.dto.recurring.CreateRecurringTransactionDTO;
 import com.finance.app.pfm_full_stack_backend.dto.recurring.RecurringTransactionResponseDTO;
 import com.finance.app.pfm_full_stack_backend.dto.recurring.UpdateRecurringTransactionDTO;
@@ -35,11 +37,11 @@ public class RecurringTransactionService
         Category category = null;
         if (data.categoryId() != null) {
             category = categoryRepository.findById(data.categoryId())
-                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
             // Verificação de segurança: A categoria pertence ao utilizador?
             if (!category.getUser().getId().equals(user.getId())) {
-                throw new SecurityException("Acesso negado: a categoria não pertence a si.");
+                throw new OperationNotPermittedException("Acesso negado: a categoria não pertence a si.");
             }
         }
 
@@ -76,12 +78,12 @@ public class RecurringTransactionService
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         RecurringTransaction recurring = recurringTransactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Regra de transação recorrente não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Regra de transação recorrente não encontrada"));
 
 
         if (!recurring.getUser().getId().equals(user.getId()))
         {
-            throw new SecurityException("Acesso negado: esta regra não lhe pertence.");
+            throw new OperationNotPermittedException("Acesso negado: esta regra não lhe pertence.");
         }
 
         if (data.description() != null)
@@ -107,11 +109,11 @@ public class RecurringTransactionService
         if (data.categoryId() != null)
         {
             Category category = categoryRepository.findById(data.categoryId())
-                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
             if (!category.getUser().getId().equals(user.getId()))
             {
-                throw new SecurityException("Acesso negado: a categoria não pertence a si.");
+                throw new OperationNotPermittedException("Acesso negado: a categoria não pertence a si.");
             }
 
             recurring.setCategory(category);
@@ -129,12 +131,12 @@ public class RecurringTransactionService
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         RecurringTransaction recurring = recurringTransactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Regra de transação recorrente não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Regra de transação recorrente não encontrada"));
 
 
         if (!recurring.getUser().getId().equals(user.getId()))
         {
-            throw new SecurityException("Acesso negado: não pode apagar esta regra.");
+            throw new OperationNotPermittedException("Acesso negado: não pode apagar esta regra.");
         }
 
         recurringTransactionRepository.delete(recurring);
