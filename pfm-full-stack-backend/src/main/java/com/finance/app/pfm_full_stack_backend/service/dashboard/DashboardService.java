@@ -2,11 +2,14 @@ package com.finance.app.pfm_full_stack_backend.service.dashboard;
 
 import com.finance.app.pfm_full_stack_backend.dto.dashboard.DashboardSummaryDTO;
 import com.finance.app.pfm_full_stack_backend.dto.dashboard.ExpenseByCategoryDTO;
+import com.finance.app.pfm_full_stack_backend.dto.dashboard.IncomeBySourceDTO;
 import com.finance.app.pfm_full_stack_backend.dto.dashboard.MonthlySummaryDTO;
 import com.finance.app.pfm_full_stack_backend.entity.Transaction;
 import com.finance.app.pfm_full_stack_backend.entity.User;
 import com.finance.app.pfm_full_stack_backend.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
