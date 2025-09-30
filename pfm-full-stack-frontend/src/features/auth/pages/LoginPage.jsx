@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
-import { getErrorMessage } from '../../../utils/errorHandler'; 
+import { getErrorMessage } from '../../../utils/errorHandler';
+import { toast } from 'react-hot-toast';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
