@@ -36,6 +36,9 @@ const MainLayout = () => {
             <NavLink to="/dashboard/recurring-transactions" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               Recorrentes
             </NavLink>
+            <NavLink to="/dashboard/reports" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Relatórios
+            </NavLink>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
