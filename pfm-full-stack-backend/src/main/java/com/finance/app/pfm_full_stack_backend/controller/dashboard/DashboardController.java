@@ -54,14 +54,23 @@ public class DashboardController
     }
 
     @GetMapping("/top-expenses")
-    public ResponseEntity<List<ExpenseByCategoryDTO>> getTopExpenses(@RequestParam(defaultValue = "5") int limit) {
+    public ResponseEntity<List<ExpenseByCategoryDTO>> getTopExpenses(@RequestParam(defaultValue = "5") int limit)
+    {
         List<ExpenseByCategoryDTO> data = transactionService.getTopExpensesForCurrentYear(limit);
         return ResponseEntity.ok(data);
     }
 
     @GetMapping("/top-income")
-    public ResponseEntity<List<IncomeBySourceDTO>> getTopIncomeSources(@RequestParam(defaultValue = "5") int limit) {
+    public ResponseEntity<List<IncomeBySourceDTO>> getTopIncomeSources(@RequestParam(defaultValue = "5") int limit)
+    {
         List<IncomeBySourceDTO> data = transactionService.getTopIncomeSourcesForCurrentYear(limit);
         return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/yearly-summary")
+    public ResponseEntity<List<MonthlySummaryDTO>> getYearlySummary(@RequestParam int year)
+    {
+        List<MonthlySummaryDTO> summary = dashboardService.getYearlySummary(year);
+        return ResponseEntity.ok(summary);
     }
 }
