@@ -1,0 +1,42 @@
+name: Deploy PFM Frontend to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'pfm-full-stack-frontend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    defaults:
+      run:
+        working-directory: ./pfm-full-stack-frontend
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Build and Push Docker image
+        run: |-
+          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/pfm-full-stack-frontend:latest .
+
+      - name: Deploy to Cloud Run
+        run: |-
+          gcloud run deploy pfm-full-stack-frontend \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/pfm-full-stack-frontend:latest \
+            --platform managed \
+            --region southamerica-east1 \
+            --allow-unauthenticated \
+            --quiet
