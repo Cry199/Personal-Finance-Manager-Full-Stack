@@ -3,6 +3,7 @@ package com.finance.app.pfm_full_stack_backend.controller.category;
 
 import com.finance.app.pfm_full_stack_backend.dto.category.CategoryResponseDTO;
 import com.finance.app.pfm_full_stack_backend.dto.category.CreateCategoryDTO;
+import com.finance.app.pfm_full_stack_backend.dto.category.UpdateCategoryDTO;
 import com.finance.app.pfm_full_stack_backend.entity.Category;
 import com.finance.app.pfm_full_stack_backend.service.category.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/categories")
@@ -38,5 +40,23 @@ public class CategoryController
     {
         List<CategoryResponseDTO> categories = categoryService.getCategoriesForUser();
         return ResponseEntity.ok(categories);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateCategoryDTO data)
+    {
+        Category updatedCategory = categoryService.updateCategory(id, data);
+        CategoryResponseDTO responseDTO = new CategoryResponseDTO(updatedCategory);
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable UUID id)
+    {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 }
