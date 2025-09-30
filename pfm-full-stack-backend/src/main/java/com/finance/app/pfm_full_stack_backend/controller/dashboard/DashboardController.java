@@ -2,12 +2,15 @@ package com.finance.app.pfm_full_stack_backend.controller.dashboard;
 
 import com.finance.app.pfm_full_stack_backend.dto.dashboard.DashboardSummaryDTO;
 import com.finance.app.pfm_full_stack_backend.dto.dashboard.ExpenseByCategoryDTO;
+import com.finance.app.pfm_full_stack_backend.dto.dashboard.IncomeBySourceDTO;
 import com.finance.app.pfm_full_stack_backend.dto.dashboard.MonthlySummaryDTO;
 import com.finance.app.pfm_full_stack_backend.service.dashboard.DashboardService;
+import com.finance.app.pfm_full_stack_backend.service.transaction.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -18,6 +21,9 @@ public class DashboardController
 {
     @Autowired
     private DashboardService dashboardService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @GetMapping("/summary")
     public ResponseEntity<DashboardSummaryDTO> getDashboardSummary()
@@ -45,5 +51,17 @@ public class DashboardController
     {
         List<MonthlySummaryDTO> summary = dashboardService.getIncomeVsExpenseForLast12Months();
         return ResponseEntity.ok(summary);
+    }
+
+    @GetMapping("/top-expenses")
+    public ResponseEntity<List<ExpenseByCategoryDTO>> getTopExpenses(@RequestParam(defaultValue = "5") int limit) {
+        List<ExpenseByCategoryDTO> data = transactionService.getTopExpensesForCurrentYear(limit);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/top-income")
+    public ResponseEntity<List<IncomeBySourceDTO>> getTopIncomeSources(@RequestParam(defaultValue = "5") int limit) {
+        List<IncomeBySourceDTO> data = transactionService.getTopIncomeSourcesForCurrentYear(limit);
+        return ResponseEntity.ok(data);
     }
 }
