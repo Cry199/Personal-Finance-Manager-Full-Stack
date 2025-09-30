@@ -10,6 +10,8 @@ import { useAuth } from '../../../hooks/useAuth';
 import Modal from '../../../components/common/Modal';
 import TransactionForm from '../components/TransactionForm';
 import Spinner from '../../../components/common/Spinner';
+import toast from 'react-hot-toast';
+import { getErrorMessage } from '../../../utils/errorHandler'; 
 
 // Função para gerar as opções do ano
 const generateYearOptions = () => {
@@ -44,7 +46,8 @@ const TransactionsPage = () => {
             setTotalPages(response.data.totalPages);
         } catch (error) {
             console.error('Erro ao buscar transações:', error);
-            toast.error('Não foi possível carregar as transações.');
+            const errorMessage = getErrorMessage(error);
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }

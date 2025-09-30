@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import Modal from '../../../components/common/Modal';
 import RecurringTransactionForm from '../components/RecurringTransactionForm';
+import toast from 'react-hot-toast';
+import { getErrorMessage } from '../../../utils/errorHandler'; 
+
 
 import {
     getRecurringTransactions,
@@ -22,6 +25,8 @@ const RecurringTransactionsPage = () => {
             setRecurring(response.data);
         } catch (error) {
             console.error('Erro ao buscar transações recorrentes:', error);
+            const errorMessage = getErrorMessage(error);
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }

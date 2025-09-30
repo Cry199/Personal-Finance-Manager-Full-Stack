@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
+import { getErrorMessage } from '../../../utils/errorHandler'; 
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -15,6 +16,8 @@ const LoginPage = () => {
       navigate('/dashboard');
     } catch (err) {
       console.error('Erro no login:', err);
+      const errorMessage = getErrorMessage(err);
+      toast.error(errorMessage);
     }
   };
 

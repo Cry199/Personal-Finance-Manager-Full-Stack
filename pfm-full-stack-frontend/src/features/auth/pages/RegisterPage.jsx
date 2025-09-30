@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { getErrorMessage } from '../../../utils/errorHandler'; 
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -23,7 +24,7 @@ const RegisterPage = () => {
             navigate('/login');
         } catch (error) {
             // O backend retorna uma mensagem de erro útil
-            const errorMessage = error.response?.data || 'Não foi possível criar a conta.';
+            const errorMessage = getErrorMessage(error);
             toast.error(errorMessage);
             console.error('Erro no registo:', error);
         }

@@ -6,6 +6,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearSca
 import { Pie, Bar } from 'react-chartjs-2';
 import Spinner from '../../../components/common/Spinner';
 import './DashboardPage.css';
+import { getErrorMessage } from '../../../utils/errorHandler'; 
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
@@ -54,7 +55,8 @@ const DashboardPage = () => {
 
       } catch (error) {
         console.error('Erro ao buscar dados do dashboard:', error);
-        toast.error("Não foi possível carregar os dados do dashboard.");
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }
