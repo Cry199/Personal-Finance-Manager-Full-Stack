@@ -1,9 +1,6 @@
 package com.finance.app.pfm_full_stack_backend.controller.dashboard;
 
-import com.finance.app.pfm_full_stack_backend.dto.dashboard.DashboardSummaryDTO;
-import com.finance.app.pfm_full_stack_backend.dto.dashboard.ExpenseByCategoryDTO;
-import com.finance.app.pfm_full_stack_backend.dto.dashboard.IncomeBySourceDTO;
-import com.finance.app.pfm_full_stack_backend.dto.dashboard.MonthlySummaryDTO;
+import com.finance.app.pfm_full_stack_backend.dto.dashboard.*;
 import com.finance.app.pfm_full_stack_backend.service.dashboard.DashboardService;
 import com.finance.app.pfm_full_stack_backend.service.transaction.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,5 +69,11 @@ public class DashboardController
     {
         List<MonthlySummaryDTO> summary = dashboardService.getYearlySummary(year);
         return ResponseEntity.ok(summary);
+    }
+
+    @GetMapping("/expense-by-weekday")
+    public ResponseEntity<List<ExpenseByWeekdayDTO>> getExpenseByWeekday() {
+        List<ExpenseByWeekdayDTO> data = dashboardService.getExpensesByWeekdayForCurrentYear();
+        return ResponseEntity.ok(data);
     }
 }
