@@ -12,6 +12,7 @@ import DashboardPage from './features/dashboard/pages/DashboardPage';
 import TransactionsPage from './features/transactions/pages/TransactionsPage';
 import CategoriesPage from './features/categories/pages/CategoriesPage';
 import RecurringTransactionsPage from './features/recurring/pages/RecurringTransactionsPage';
+import ReportsPage from './features/reports/pages/ReportsPage';
 
 // Componentes
 import MainLayout from './components/layout/MainLayout';
@@ -69,6 +70,7 @@ const AppContent = () => {
           <Route path="transactions" element={<TransactionsPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="recurring-transactions" element={<RecurringTransactionsPage />} />
+          <Route path="reports" element={<ReportsPage />} />
         </Route>
 
         {/* Redirecionamento para utilizadores já logados que tentam aceder a uma rota inexistente */}
