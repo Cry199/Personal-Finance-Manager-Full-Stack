@@ -1,9 +1,6 @@
 package com.finance.app.pfm_full_stack_backend.service.dashboard;
 
-import com.finance.app.pfm_full_stack_backend.dto.dashboard.DashboardSummaryDTO;
-import com.finance.app.pfm_full_stack_backend.dto.dashboard.ExpenseByCategoryDTO;
-import com.finance.app.pfm_full_stack_backend.dto.dashboard.IncomeBySourceDTO;
-import com.finance.app.pfm_full_stack_backend.dto.dashboard.MonthlySummaryDTO;
+import com.finance.app.pfm_full_stack_backend.dto.dashboard.*;
 import com.finance.app.pfm_full_stack_backend.entity.Transaction;
 import com.finance.app.pfm_full_stack_backend.entity.User;
 import com.finance.app.pfm_full_stack_backend.repository.TransactionRepository;
@@ -23,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class DashboardService
@@ -164,5 +163,33 @@ public class DashboardService
         }
 
         return summaryList;
+    }
+
+    public List<ExpenseByWeekdayDTO> getExpensesByWeekdayForCurrentYear()
+    {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.with(TemporalAdjusters.firstDayOfYear());
+        LocalDate endDate = today.with(TemporalAdjusters.lastDayOfYear());
+
+        List<Map<String, Object>> results = transactionRepository
+                .findExpensesByWeekday(user.getId(), startDate, endDate);
+
+        Map<Integer, BigDecimal> expensesMap = results.stream()
+                .collect(Collectors.toMap(
+                        r -> ((Number) r.get("dayOfWeek")).intValue(),
+                        r -> (BigDecimal) r.get("total")
+                ));
+
+        String[] weekdays = {"Segunda-feira", "Terça-feira", "Quarta-feira",
+                "Quinta-feira", "Sexta-feira", "Sábado", "Domingo"};
+
+
+        return IntStream.rangeClosed(1, 7)
+                .mapToObj(i -> new ExpenseByWeekdayDTO(
+                        weekdays[i - 1],
+                        expensesMap.getOrDefault(i, BigDecimal.ZERO)
+                ))
+                .collect(Collectors.toList());
     }
 }
