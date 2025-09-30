@@ -50,9 +50,23 @@
   margin-top: 0.75rem;
 }
 
+.home-footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.home-footer a:visited {
+  color: var(--primary-color);
+}
+
+.home-footer a:hover {
+  text-decoration: underline;
+}
+
 .features {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
   gap: 1.5rem;
   margin-bottom: 3rem;
   width: 100%;

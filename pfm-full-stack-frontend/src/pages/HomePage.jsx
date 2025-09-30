@@ -40,6 +40,28 @@ const HomePage = () => {
             </Link>
           </div>
         </main>
+
+        <footer className="home-footer">
+          <p>
+            Este projeto é feito como material de estudo por {' '}
+            <a href="https://github.com/Cry199" target="_blank" rel="noopener noreferrer">
+              Cry199
+            </a>
+            .
+          </p>
+          <p>
+            Link do Repositório: {' '}
+            <a href="https://github.com/Cry199/Personal-Finance-Manager-Full-Stack" target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>
+          </p>
+          <p>
+            Backend (API): {' '}
+            <a href="https://pfm-full-stack-api-faw777jkuq-rj.a.run.app/swagger-ui/index.html" target="_blank" rel="noopener noreferrer">
+              Swagger UI
+            </a>
+          </p>
+        </footer>
       </div>
     </div>
   );
