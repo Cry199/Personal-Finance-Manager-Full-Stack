@@ -1,4 +1,12 @@
 export const getErrorMessage = (error) => {
+    if (error.response && error.response.data && error.response.data.message) {
+        return error.response.data.message;
+    }
+    
+    if (error.response && error.response.data) {
+        return error.response.data;
+    }
+
     if (error.response) {
         // Se o backend enviar uma mensagem de erro específica em formato de texto
         if (typeof error.response.data === 'string' && error.response.data.length > 0) {
