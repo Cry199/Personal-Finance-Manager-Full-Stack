@@ -3,6 +3,9 @@ package com.finance.app.pfm_full_stack_backend.service.category;
 import com.finance.app.pfm_full_stack_backend.dto.category.CategoryResponseDTO;
 import com.finance.app.pfm_full_stack_backend.dto.category.CreateCategoryDTO;
 import com.finance.app.pfm_full_stack_backend.dto.category.UpdateCategoryDTO;
+import com.finance.app.pfm_full_stack_backend.dto.exception.BusinessException;
+import com.finance.app.pfm_full_stack_backend.dto.exception.OperationNotPermittedException;
+import com.finance.app.pfm_full_stack_backend.dto.exception.ResourceNotFoundException;
 import com.finance.app.pfm_full_stack_backend.entity.Category;
 import com.finance.app.pfm_full_stack_backend.entity.User;
 import com.finance.app.pfm_full_stack_backend.repository.CategoryRepository;
@@ -50,11 +53,11 @@ public class CategoryService
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
         if (!category.getUser().getId().equals(user.getId()))
         {
-            throw new SecurityException("Acesso negado: esta categoria não lhe pertence.");
+            throw new OperationNotPermittedException("Acesso negado: esta categoria não lhe pertence.");
         }
 
         category.setName(data.name());
@@ -67,17 +70,17 @@ public class CategoryService
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
         if (!category.getUser().getId().equals(user.getId()))
         {
-            throw new SecurityException("Acesso negado: não pode apagar esta categoria.");
+            throw new OperationNotPermittedException("Acesso negado: não pode apagar esta categoria.");
         }
 
         long usageCount = transactionRepository.countByCategoryId(id);
         if (usageCount > 0)
         {
-            throw new IllegalStateException("Não é possível apagar a categoria '" + category.getName()
+            throw new BusinessException("Não é possível apagar a categoria '" + category.getName() +
                     "' porque está a ser utilizada por " + usageCount + " transação(ões).");
         }
 
