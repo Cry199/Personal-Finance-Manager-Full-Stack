@@ -103,7 +103,7 @@ public class RecurringTransactionJobService
                     rule.getDescription(), latestDateToUpdate);
         }
     }
-    
+
     private LocalDate calculateNextDueDate(LocalDate currentDate, RecurringTransaction.RecurrencePeriod period)
     {
         return switch (period)
