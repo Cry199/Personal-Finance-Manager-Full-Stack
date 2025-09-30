@@ -5,4 +5,4 @@ import java.math.BigDecimal;
 public record ExpenseByWeekdayDTO(
         String dayOfWeek,
         BigDecimal totalAmount
-) { }
+) {}
