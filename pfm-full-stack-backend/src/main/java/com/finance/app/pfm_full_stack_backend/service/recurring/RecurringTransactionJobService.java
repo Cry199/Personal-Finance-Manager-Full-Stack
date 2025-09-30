@@ -27,8 +27,10 @@ public class RecurringTransactionJobService
 
     @Autowired
     private JobExecutionLogRepository jobExecutionLogRepository;
+
     @Autowired
     private RecurringTransactionRepository recurringTransactionRepository;
+
     @Autowired
     private TransactionRepository transactionRepository;
 
@@ -38,23 +40,9 @@ public class RecurringTransactionJobService
     {
         log.info("Iniciando a verificação de transações recorrentes...");
         LocalDateTime now = LocalDateTime.now();
-
-
-        JobExecutionLog jobLog = jobExecutionLogRepository.findById(JOB_NAME)
-                .orElse(new JobExecutionLog(JOB_NAME, null));
-
-        if (jobLog.getLastExecution() == null)
-        {
-            log.info("Primeira execução do job. A registar a hora atual e a terminar.");
-            jobLog.setLastExecution(now);
-            jobExecutionLogRepository.save(jobLog);
-            return;
-        }
-
-        LocalDate lastRunDate = jobLog.getLastExecution().toLocalDate();
         LocalDate today = now.toLocalDate();
 
-        // regras de recorrência ativas
+        // Procura por todas as regras de recorrência ativas.
         List<RecurringTransaction> activeNoEndDate = recurringTransactionRepository
                 .findAllByStartDateLessThanEqualAndEndDateIsNull(today);
         List<RecurringTransaction> activeWithEndDate = recurringTransactionRepository
@@ -64,26 +52,29 @@ public class RecurringTransactionJobService
 
         log.info("Encontradas {} regras de transações recorrentes ativas para processar.", allActiveRules.size());
 
-        // cria as transações em falta.
         for (RecurringTransaction rule : allActiveRules)
         {
-            createMissingTransactionsForRule(rule, lastRunDate, today);
+            createMissingTransactionsForRule(rule, today);
         }
 
-        // atualiza o registo do job com a data e hora da execução atual.
+        JobExecutionLog jobLog = jobExecutionLogRepository.findById(JOB_NAME)
+                .orElseGet(() -> new JobExecutionLog(JOB_NAME, null));
         jobLog.setLastExecution(now);
         jobExecutionLogRepository.save(jobLog);
         log.info("Processamento de transações recorrentes concluído.");
     }
 
-    private void createMissingTransactionsForRule(RecurringTransaction rule, LocalDate lastRunDate, LocalDate today)
+    private void createMissingTransactionsForRule(RecurringTransaction rule, LocalDate today)
     {
-        LocalDate latestExecutionDate = rule.getLastExecutionDate();
-        LocalDate nextDueDate = rule.getLastExecutionDate() != null ? rule.getLastExecutionDate() : rule.getStartDate();
+        LocalDate nextDueDate = (rule.getLastExecutionDate() != null)
+                ? calculateNextDueDate(rule.getLastExecutionDate(), rule.getPeriod())
+                : rule.getStartDate();
+
+        LocalDate latestExecutionDateForThisRule = rule.getLastExecutionDate();
 
         while (!nextDueDate.isAfter(today))
         {
-            if (!nextDueDate.isBefore(lastRunDate))
+            if (rule.getEndDate() == null || !nextDueDate.isAfter(rule.getEndDate()))
             {
                 Transaction newTransaction = new Transaction(
                         null,
@@ -95,19 +86,22 @@ public class RecurringTransactionJobService
                         rule.getCategory()
                 );
                 transactionRepository.save(newTransaction);
-                log.info("Transação recorrente criada: '{}' na data {}", newTransaction.getDescription(), nextDueDate);
+                log.info("Transação recorrente criada: '{}' na data {}",
+                        newTransaction.getDescription(), nextDueDate);
 
-                latestExecutionDate = nextDueDate;
+                latestExecutionDateForThisRule = nextDueDate;
             }
+
 
             nextDueDate = calculateNextDueDate(nextDueDate, rule.getPeriod());
         }
 
-        if (latestExecutionDate != null && !latestExecutionDate.equals(rule.getLastExecutionDate()))
+        if (latestExecutionDateForThisRule != null
+                && !latestExecutionDateForThisRule.equals(rule.getLastExecutionDate()))
         {
-            rule.setLastExecutionDate(latestExecutionDate);
-            recurringTransactionRepository.save(rule); // Salva a regra atualizada
-            log.info("Regra recorrente '{}' atualizada com a data de execução {}", rule.getDescription(), latestExecutionDate);
+            rule.setLastExecutionDate(latestExecutionDateForThisRule);
+            recurringTransactionRepository.save(rule);
+            log.info("Regra recorrente '{}' atualizada com a última data de execução: {}", rule.getDescription(), latestExecutionDateForThisRule);
         }
     }
 
