@@ -112,7 +112,7 @@ const DashboardPage = () => {
             </div>
             <div className="summary-text">
               <p>Saldo Atual</p>
-              <span>{formatCurrency(summary?.currentBalance)}</span>
+              <span>{formatCurrency(summary?.balance)}</span>
             </div>
           </div>
         </div>
