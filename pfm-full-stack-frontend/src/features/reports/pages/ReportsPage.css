@@ -1,0 +1,11 @@
+.report-container {
+  width: 100%;
+  height: 60vh; 
+  padding: 1rem 0;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
